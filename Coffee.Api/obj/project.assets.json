@@ -382,6 +382,23 @@
         "runtime": {
           "lib/net9.0/ZstdSharp.dll": {}
         }
+      },
+      "Coffee.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "Dapper": "2.1.72",
+          "Dapper.Contrib": "2.0.78",
+          "MySql.Data": "9.6.0",
+          "MySql.Data.EntityFrameworkCore": "8.0.22",
+          "MySqlConnector": "2.5.0"
+        },
+        "compile": {
+          "bin/placeholder/Coffee.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Coffee.Core.dll": {}
+        }
       }
     }
   },
@@ -983,10 +1000,16 @@
         "zstdsharp.port.0.8.6.nupkg.sha512",
         "zstdsharp.port.nuspec"
       ]
+    },
+    "Coffee.Core/1.0.0": {
+      "type": "project",
+      "path": "../Coffee.Core/Coffee.Core.csproj",
+      "msbuildProject": "../Coffee.Core/Coffee.Core.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "Coffee.Core >= 1.0.0",
       "Dapper >= 2.1.72",
       "Dapper.Contrib >= 2.0.78",
       "Microsoft.AspNetCore.OpenApi >= 10.0.2",
@@ -1019,7 +1042,11 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.Core\\Coffee.Core.csproj": {
+              "projectPath": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.Core\\Coffee.Core.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
