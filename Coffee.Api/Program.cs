@@ -1,5 +1,7 @@
 using Coffee.Api.DataAccess;
 using Coffee.Api.DataAccess.Interfaces;
+using Coffee.Api.Repositories;
+using Coffee.Api.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IDbContext, DbContext>();
+builder.Services.AddSingleton<IDbContext, DbContext>();
+// Aquí irás registrando tus repositorios
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
 var app = builder.Build();
 
