@@ -1,0 +1,13 @@
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\bin\Debug\net10.0\Coffee.Core.deps.json
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\bin\Debug\net10.0\Coffee.Core.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\bin\Debug\net10.0\Coffee.Core.pdb
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.csproj.AssemblyReference.cache
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.AssemblyInfoInputs.cache
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.AssemblyInfo.cs
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.csproj.CoreCompileInputs.cache
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.sourcelink.json
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\refint\Coffee.Core.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\Coffee.Core.pdb
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Core\obj\Debug\net10.0\ref\Coffee.Core.dll
