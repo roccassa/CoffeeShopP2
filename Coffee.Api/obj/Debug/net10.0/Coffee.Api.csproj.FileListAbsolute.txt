@@ -60,3 +60,6 @@ C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\
 C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\obj\Debug\net10.0\Coffee.Api.pdb
 C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\obj\Debug\net10.0\Coffee.Api.genruntimeconfig.cache
 C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\obj\Debug\net10.0\ref\Coffee.Api.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
