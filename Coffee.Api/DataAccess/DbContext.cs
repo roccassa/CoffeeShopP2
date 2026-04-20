@@ -10,15 +10,14 @@ public class DbContext: IDbContext
 
     public DbContext()
     {
-        _connectionString = "server=localhost;port=3306;user=root;password=12345678;database=CafeteriaDB";
+        _connectionString = "server=localhost;port=3306;user=root;password=admin;database=CafeteriaDB";
     }
 
     public IDbConnection Connection
     {
         get
         {
-          
-            if (_connection == null )
+          if (_connection == null )
             {
                 _connection = new MySqlConnection(_connectionString);
                 
