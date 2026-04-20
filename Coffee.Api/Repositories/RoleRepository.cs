@@ -22,4 +22,24 @@ public class RoleRepository : IRoleRepository
         var result = await _context.Connection.ExecuteAsync(sql, new { Name = role.Name });
         return result > 0;
     }
+    
+    public async Task<Role> GetByIdAsync(int id)
+    {
+        var sql = "SELECT id as Id, nombre as Name FROM Roles WHERE id = @Id";
+        return await _context.Connection.QueryFirstOrDefaultAsync<Role>(sql, new { Id = id });
+    }
+    
+    public async Task<bool> UpdateAsync(Role role)
+    {
+        var sql = "UPDATE Roles SET nombre = @Name WHERE id = @Id";
+        var result = await _context.Connection.ExecuteAsync(sql, new { Name = role.Name, Id = role.Id });
+        return result > 0;
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var sql = "DELETE FROM Roles WHERE id = @Id";
+        var result = await _context.Connection.ExecuteAsync(sql, new { Id = id });
+        return result > 0;
+    }
 }
