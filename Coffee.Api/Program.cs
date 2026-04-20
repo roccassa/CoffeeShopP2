@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();           // Genera la documentación de Swagg
 builder.Services.AddScoped<IDbContext, DbContext>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 var app = builder.Build();
 

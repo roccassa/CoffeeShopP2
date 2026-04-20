@@ -2,7 +2,7 @@
 using Coffee.Api.Repositories.Interfaces;
 using Coffee.Core.Entities;
 
-namespace Coffee.Api.Controllers;
+namespace Coffee.Api.Controller;
 
 [ApiController]
 [Route("api/[controller]")] 
