@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();           // Genera la documentación de Swagg
 // Tus inyecciones de dependencia
 builder.Services.AddScoped<IDbContext, DbContext>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 
