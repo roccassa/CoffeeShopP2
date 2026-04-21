@@ -8,17 +8,18 @@ using Coffee.Api.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. REGISTRO DE SERVICIOS
-builder.Services.AddControllers(); // ¡IMPORTANTE! Sin esto no sirven los controladores de Alex
+// REGISTRO DE SERVICIOS
+builder.Services.AddControllers(); //sin esto no sirven los controladores 
 builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer(); // Necesario para Swagger clásico
-builder.Services.AddSwaggerGen();           // Genera la documentación de Swagger
+builder.Services.AddEndpointsApiExplorer(); 
+builder.Services.AddSwaggerGen();         
 
-// Tus inyecciones de dependencia
+// inyecciones de dependencia
 builder.Services.AddScoped<IDbContext, DbContext>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
