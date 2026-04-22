@@ -22,24 +22,24 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> Create([FromBody] User user)
     {
         // Validación rigurosa de campos
-        if (string.IsNullOrWhiteSpace(user.Username)) return BadRequest("El nombre de usuario es requerido.");
-        if (string.IsNullOrWhiteSpace(user.PasswordHash)) return BadRequest("La contraseña es requerida.");
-        if (user.RoleId <= 0) return BadRequest("Debe asignar un rol válido.");
+        if (string.IsNullOrWhiteSpace(user.Username)) return BadRequest("A username is required.");
+        if (string.IsNullOrWhiteSpace(user.PasswordHash)) return BadRequest("Password is required.");
+        if (user.RoleId <= 0) return BadRequest("You must assign a valid role.");
 
         try 
         {
             var result = await _userRepository.SaveAsync(user);
-            return result ? Ok("Usuario creado exitosamente.") : BadRequest("No se pudo crear el usuario.");
+            return result ? Ok("User created successfully.") : BadRequest("The user could not be created..");
         }
         catch (Exception ex)
         {
             if (ex.Message.Contains("Duplicate entry"))
-                return BadRequest("El nombre de usuario ya existe.");
+                return BadRequest("The username already exists.");
             
             if (ex.Message.Contains("foreign key constraint fails"))
-                return BadRequest("El ID de Rol proporcionado no existe.");
+                return BadRequest("The provided Role ID does not exist.");
 
-            return StatusCode(500, "Error interno del servidor.");
+            return StatusCode(500, "Internal Server Error.");
         }
     }
 
@@ -50,31 +50,31 @@ public class UsersController : ControllerBase
         var user = await _userRepository.GetByUsernameAsync(username);
         
         if (user == null || user.PasswordHash != password) // En un proyecto real usarías hashing
-            return Unauthorized("Usuario o contraseña incorrectos.");
+            return Unauthorized("Incorrect username or password.");
 
-        return Ok(new { Message = $"Bienvenido {user.FullName}", Rol = user.RoleId });
+        return Ok(new { Message = $"Welcome {user.FullName}", Rol = user.RoleId });
     }
     
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var user = await _userRepository.GetByIdAsync(id);
-        if (user == null) return NotFound("Usuario no encontrado");
+        if (user == null) return NotFound("User not found");
         return Ok(user);
     }
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] User user)
     {
-        if (user.Id <= 0) return BadRequest("ID de usuario no válido");
+        if (user.Id <= 0) return BadRequest("Invalid user ID");
         var result = await _userRepository.UpdateAsync(user);
-        return result ? Ok("Usuario actualizado") : BadRequest("No se pudo actualizar");
+        return result ? Ok("User updated") : BadRequest("Could not update");
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _userRepository.DeleteAsync(id);
-        return result ? Ok("Usuario eliminado") : NotFound("El usuario no existe");
+        return result ? Ok("User deleted") : NotFound("The user does not exist");
     }
 }

@@ -27,27 +27,27 @@ public class CustomersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Customer customer)
     {
-        if (string.IsNullOrWhiteSpace(customer.Email)) return BadRequest("El correo es obligatorio.");
+        if (string.IsNullOrWhiteSpace(customer.Email)) return BadRequest("Email is mandatory.");
         
         try {
             var result = await _customerRepository.SaveAsync(customer);
-            return result ? Ok("Cliente registrado") : BadRequest("Error al registrar");
+            return result ? Ok("Registered customer\n") : BadRequest("Error registering");
         }
         catch (Exception ex) {
-            if (ex.Message.Contains("Duplicate entry")) return BadRequest("Ese correo ya está registrado.");
-            return StatusCode(500, "Error de servidor.");
+            if (ex.Message.Contains("Duplicate entry")) return BadRequest("This email is already registered.");
+            return StatusCode(500, "Server error.");
         }
     }
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] Customer customer)
     {
-        if (customer.Id <= 0) return BadRequest("ID inválido");
+        if (customer.Id <= 0) return BadRequest("ID invalid");
         var result = await _customerRepository.UpdateAsync(customer);
-        return result ? Ok("Cliente actualizado") : BadRequest("No se pudo actualizar");
+        return result ? Ok("Updated customer") : BadRequest("Could not update");
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id) => 
-        await _customerRepository.DeleteAsync(id) ? Ok("Cliente eliminado") : NotFound();
+        await _customerRepository.DeleteAsync(id) ? Ok("Customer deleted") : NotFound();
 }

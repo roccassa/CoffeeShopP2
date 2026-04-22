@@ -14,9 +14,9 @@ public class OrdersController : ControllerBase {
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Order order) {
-        if (order.UserId <= 0 || order.PaymentMethodId <= 0) return BadRequest("Datos de orden incompletos.");
+        if (order.UserId <= 0 || order.PaymentMethodId <= 0) return BadRequest("Incomplete order data.");
         var id = await _orderRepo.SaveAsync(order);
-        return Ok(new { Message = "Orden iniciada", OrderId = id });
+        return Ok(new { Message = "Order started", OrderId = id });
     }
     
     [HttpGet("{id}")]
@@ -27,12 +27,12 @@ public class OrdersController : ControllerBase {
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] Order order) {
-        if (order.Id <= 0) return BadRequest("ID inválido");
-        return await _orderRepo.UpdateAsync(order) ? Ok("Orden actualizada") : BadRequest();
+        if (order.Id <= 0) return BadRequest("ID invalid");
+        return await _orderRepo.UpdateAsync(order) ? Ok("Order updated") : BadRequest();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id) {
-        return await _orderRepo.DeleteAsync(id) ? Ok("Orden eliminada") : NotFound();
+        return await _orderRepo.DeleteAsync(id) ? Ok("Order deleted") : NotFound();
     }
 }

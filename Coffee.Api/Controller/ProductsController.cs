@@ -21,9 +21,9 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Product product)
     {
-        if (string.IsNullOrEmpty(product.Name)) return BadRequest("El nombre es requerido");
+        if (string.IsNullOrEmpty(product.Name)) return BadRequest("The name is required");
         var result = await _productRepository.SaveAsync(product);
-        return result ? Ok("Producto creado") : BadRequest("Error al crear");
+        return result ? Ok("Product created") : BadRequest("Error creating");
     }
     
     [HttpGet("{id}")]

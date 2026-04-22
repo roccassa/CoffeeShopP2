@@ -22,10 +22,10 @@ namespace Coffee.Api.Controller;
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            if (id <= 0) return BadRequest("ID de rol inválido.");
+            if (id <= 0) return BadRequest("Invalid role ID.");
         
             var role = await _roleRepository.GetByIdAsync(id);
-            if (role == null) return NotFound($"No se encontró el rol con ID {id}");
+            if (role == null) return NotFound($"The role with ID was not found. {id}");
         
             return Ok(role);
         }
@@ -33,35 +33,35 @@ namespace Coffee.Api.Controller;
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Role role)
         {
-            if (string.IsNullOrEmpty(role.Name)) return BadRequest("El nombre del rol es obligatorio");
+            if (string.IsNullOrEmpty(role.Name)) return BadRequest("The role name is required");
             var result = await _roleRepository.SaveAsync(role);
-            return result ? Ok("Rol creado") : BadRequest("Error al crear el rol");
+            return result ? Ok("Rol created") : BadRequest("Error creating role");
         }
         
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Role role)
         {
-            if (role.Id <= 0) return BadRequest("Se requiere un ID de rol válido para actualizar.");
-            if (string.IsNullOrWhiteSpace(role.Name)) return BadRequest("El nombre no puede estar vacío.");
+            if (role.Id <= 0) return BadRequest("A valid role ID is required to update.");
+            if (string.IsNullOrWhiteSpace(role.Name)) return BadRequest("The name cannot be empty..");
 
             var result = await _roleRepository.UpdateAsync(role);
-            return result ? Ok("Rol actualizado correctamente.") : BadRequest("No se pudo actualizar el rol o el ID no existe.");
+            return result ? Ok("Role updated successfully.") : BadRequest("The role could not be updated or the ID does not exist..");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (id <= 0) return BadRequest("ID de rol inválido.");
+            if (id <= 0) return BadRequest("Invalid rol ID");
 
             try 
             {
                 var result = await _roleRepository.DeleteAsync(id);
-                return result ? Ok("Rol eliminado.") : NotFound("El rol no existe.");
+                return result ? Ok("Rol deleted.") : NotFound("Rol doesn't exist.");
             }
             catch (Exception)
             {
                 // Validación de integridad: Evita que la app truene si el rol está en uso por un usuario
-                return BadRequest("No se puede eliminar el rol porque tiene usuarios asociados.");
+                return BadRequest("The role cannot be deleted because it has associated users..");
             }
         }
         
