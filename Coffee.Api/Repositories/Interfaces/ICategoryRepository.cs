@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic; 
-using System.Threading.Tasks;    
+﻿  
 using Coffee.Core.Entities;
 namespace Coffee.Api.Repositories.Interfaces;
 
