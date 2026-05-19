@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "LM01EjhDbJY=",
+  "dgSpecHash": "M5k/nfwnVL8=",
   "success": true,
   "projectFilePath": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.Api\\Coffee.Api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Antonio\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\bouncycastle.cryptography\\2.6.2\\bouncycastle.cryptography.2.6.2.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\dapper\\2.1.72\\dapper.2.1.72.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\dapper.contrib\\2.0.78\\dapper.contrib.2.0.78.nupkg.sha512",

@@ -25,7 +25,9 @@ public class UserRepository : IUserRepository
     public async Task<bool> SaveAsync(User user)
     {
         var sql = "INSERT INTO Usuarios (rol_id, username, password_hash, nombre_completo) VALUES (@RoleId, @Username, @PasswordHash, @FullName)";
+
         var result = await _context.Connection.ExecuteAsync(sql, user);
+
         return result > 0;
     }
 
