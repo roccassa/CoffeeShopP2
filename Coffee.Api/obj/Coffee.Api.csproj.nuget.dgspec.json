@@ -82,6 +82,10 @@
               "target": "Package",
               "version": "[2.5.0, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.5-beta1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[10.1.7, )"
@@ -589,6 +593,10 @@
             "MySqlConnector": {
               "target": "Package",
               "version": "[2.5.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.5-beta1, )"
             }
           },
           "imports": [
