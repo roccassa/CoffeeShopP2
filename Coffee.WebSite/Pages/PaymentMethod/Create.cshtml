@@ -1,0 +1,27 @@
+@page
+@model Coffee.WebSite.Pages.PaymentMethod.CreateModel
+
+@{ ViewData["Title"] = "Agregar Método de Pago"; }
+
+<div class="container mt-4">
+    <h2>Agregar Método de Pago</h2>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="PaymentMethodDto.Name" class="form-label">Nombre</label>
+                    <input asp-for="PaymentMethodDto.Name" class="form-control" required />
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">Crear</button>
+                    <a asp-page="./List" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

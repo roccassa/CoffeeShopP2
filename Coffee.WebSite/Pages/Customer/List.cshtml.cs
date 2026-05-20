@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Coffee.WebSite.Pages.Customer;
 
+[IgnoreAntiforgeryToken(Order = 1001)]
 public class ListModel : PageModel
 {
     private readonly ICustomerService _service;
@@ -23,10 +24,17 @@ public class ListModel : PageModel
         if (!string.IsNullOrWhiteSpace(SearchTerm))
             all = all.Where(c =>
                     c.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (c.Email != null && c.Email.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)))
+                    (c.Email != null && c.Email.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)) ||
+                    c.Id.ToString() == SearchTerm)
                 .ToList();
 
         Customers = all;
         return Page();
+    }
+
+    public async Task<JsonResult> OnPostDeleteAsync(int id)
+    {
+        var response = await _service.DeleteAsync(id);
+        return new JsonResult(response.Data);
     }
 }

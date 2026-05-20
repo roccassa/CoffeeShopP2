@@ -1,0 +1,36 @@
+@page "{id:int}"
+@model Coffee.WebSite.Pages.ProductVariant.UpdateModel
+
+@{ ViewData["Title"] = "Editar Presentación"; }
+
+<div class="container mt-4">
+    <h2>Editar Presentación</h2>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <input type="hidden" asp-for="ProductVariantDto.Id" />
+                <div class="mb-3">
+                    <label asp-for="ProductVariantDto.ProductId" class="form-label">Producto ID</label>
+                    <input asp-for="ProductVariantDto.ProductId" class="form-control" type="number" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ProductVariantDto.Size" class="form-label">Tamaño</label>
+                    <input asp-for="ProductVariantDto.Size" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ProductVariantDto.Price" class="form-label">Precio</label>
+                    <input asp-for="ProductVariantDto.Price" class="form-control" type="number" step="0.01" required />
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <a asp-page="./List" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

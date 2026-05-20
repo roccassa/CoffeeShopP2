@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Coffee.WebSite")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a54162fd3b9f14e24c353852a819ebdc9da27d11")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+547f5dd591e297f0c80aced4c51574838fe43be3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Coffee.WebSite")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Coffee.WebSite")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -8,6 +8,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddHttpClient<ICategoryService, CategoryService>();
 builder.Services.AddHttpClient<ICustomerService, CustomerService>();
 builder.Services.AddHttpClient<IRoleService, RoleService>();
+builder.Services.AddHttpClient<IProductService, ProductService>();
+builder.Services.AddHttpClient<IProductVariantService, ProductVariantService>();
+builder.Services.AddHttpClient<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddHttpClient<IOrderService, OrderService>();
+builder.Services.AddHttpClient<IOrderDetailService, OrderDetailService>();
+builder.Services.AddHttpClient<IUserService, UserService>();
 
 var app = builder.Build();
 

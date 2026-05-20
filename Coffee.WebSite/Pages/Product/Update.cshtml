@@ -1,0 +1,40 @@
+@page "{id:int}"
+@model Coffee.WebSite.Pages.Product.UpdateModel
+
+@{ ViewData["Title"] = "Editar Producto"; }
+
+<div class="container mt-4">
+    <h2>Editar Producto</h2>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <input type="hidden" asp-for="ProductDto.Id" />
+                <div class="mb-3">
+                    <label asp-for="ProductDto.Name" class="form-label">Nombre</label>
+                    <input asp-for="ProductDto.Name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ProductDto.Description" class="form-label">Descripción</label>
+                    <textarea asp-for="ProductDto.Description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ProductDto.CategoryId" class="form-label">Categoría ID</label>
+                    <input asp-for="ProductDto.CategoryId" class="form-control" type="number" required />
+                </div>
+                <div class="mb-3 form-check">
+                    <input asp-for="ProductDto.IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="ProductDto.IsActive" class="form-check-label">Activo</label>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <a asp-page="./List" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+@page "{id:int}"
+@model Coffee.WebSite.Pages.User.UpdateModel
+
+@{ ViewData["Title"] = "Editar Usuario"; }
+
+<div class="container mt-4">
+    <h2>Editar Usuario</h2>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <input type="hidden" asp-for="UserDto.Id" />
+                <div class="mb-3">
+                    <label asp-for="UserDto.Username" class="form-label">Username</label>
+                    <input asp-for="UserDto.Username" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UserDto.FullName" class="form-label">Nombre Completo</label>
+                    <input asp-for="UserDto.FullName" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UserDto.PasswordHash" class="form-label">Contraseña</label>
+                    <input asp-for="UserDto.PasswordHash" class="form-control" type="password" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UserDto.RoleId" class="form-label">Rol ID</label>
+                    <input asp-for="UserDto.RoleId" class="form-control" type="number" required />
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <a asp-page="./List" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
