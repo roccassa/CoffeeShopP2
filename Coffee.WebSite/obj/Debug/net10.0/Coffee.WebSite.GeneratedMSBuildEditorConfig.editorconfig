@@ -46,6 +46,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Antonio/Documents/ITSPR/E3/Tecnologias web/Tecnologias_P2/CoffeeShopP2/Coffee/Coffee.WebSite/Pages/Role/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUm9sZVxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Antonio/Documents/ITSPR/E3/Tecnologias web/Tecnologias_P2/CoffeeShopP2/Coffee/Coffee.WebSite/Pages/Role/List.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUm9sZVxMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Antonio/Documents/ITSPR/E3/Tecnologias web/Tecnologias_P2/CoffeeShopP2/Coffee/Coffee.WebSite/Pages/Role/Update.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUm9sZVxVcGRhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Antonio/Documents/ITSPR/E3/Tecnologias web/Tecnologias_P2/CoffeeShopP2/Coffee/Coffee.WebSite/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

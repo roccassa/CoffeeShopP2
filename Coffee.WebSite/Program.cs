@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Aquí van los registros de servicios (builder.Services.AddScoped...)
 builder.Services.AddHttpClient<ICategoryService, CategoryService>()
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
@@ -13,11 +14,10 @@ builder.Services.AddHttpClient<ICategoryService, CategoryService>()
             HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
     });
 
-// Aquí van los registros de servicios (builder.Services.AddScoped...)
-builder.Services.AddHttpClient<ICategoryService, CategoryService>()
+builder.Services.AddHttpClient<IRoleService, RoleService>()
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
-        ServerCertificateCustomValidationCallback = 
+        ServerCertificateCustomValidationCallback =
             HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
     });
 var app = builder.Build();

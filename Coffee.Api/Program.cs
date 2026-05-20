@@ -5,6 +5,8 @@ using Coffee.Api.DataAccess;
 using Coffee.Api.DataAccess.Interfaces;
 using Coffee.Api.Repositories;
 using Coffee.Api.Repositories.Interfaces;
+using Coffee.Api.Services;
+using Coffee.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,10 @@ builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 builder.Services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+
+
+builder.Services.AddScoped<IRoleService, RoleService>();
+
 
 var app = builder.Build();
 
