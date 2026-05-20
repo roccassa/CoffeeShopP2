@@ -18,6 +18,10 @@ public class OrderService : IOrderService
     {
         var res = await _client.GetAsync($"{_baseUrl}{_endpoint}");
         var json = await res.Content.ReadAsStringAsync();
+        
+        if (!res.IsSuccessStatusCode)
+            throw new Exception($"Error en GetAllAsync ({res.StatusCode}): {json}");
+
         return JsonConvert.DeserializeObject<Response<List<OrderDto>>>(json)!;
     }
 
@@ -25,6 +29,10 @@ public class OrderService : IOrderService
     {
         var res = await _client.GetAsync($"{_baseUrl}{_endpoint}/{id}");
         var json = await res.Content.ReadAsStringAsync();
+        
+        if (!res.IsSuccessStatusCode)
+            throw new Exception($"Error en GetByIdAsync ({res.StatusCode}): {json}");
+
         return JsonConvert.DeserializeObject<Response<OrderDto>>(json)!;
     }
 
@@ -34,6 +42,13 @@ public class OrderService : IOrderService
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var res = await _client.PostAsync($"{_baseUrl}{_endpoint}", content);
         var jsonResponse = await res.Content.ReadAsStringAsync();
+        
+       
+        if (!res.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error al crear la orden ({res.StatusCode}). Respuesta del servidor: {jsonResponse}");
+        }
+
         return JsonConvert.DeserializeObject<Response<OrderDto>>(jsonResponse)!;
     }
 
@@ -43,6 +58,10 @@ public class OrderService : IOrderService
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var res = await _client.PutAsync($"{_baseUrl}{_endpoint}/{dto.Id}", content);
         var jsonResponse = await res.Content.ReadAsStringAsync();
+        
+        if (!res.IsSuccessStatusCode)
+            throw new Exception($"Error en UpdateAsync ({res.StatusCode}): {jsonResponse}");
+
         return JsonConvert.DeserializeObject<Response<OrderDto>>(jsonResponse)!;
     }
 
@@ -50,6 +69,10 @@ public class OrderService : IOrderService
     {
         var res = await _client.DeleteAsync($"{_baseUrl}{_endpoint}/{id}");
         var jsonResponse = await res.Content.ReadAsStringAsync();
+        
+        if (!res.IsSuccessStatusCode)
+            throw new Exception($"Error en DeleteAsync ({res.StatusCode}): {jsonResponse}");
+
         return JsonConvert.DeserializeObject<Response<bool>>(jsonResponse)!;
     }
 }

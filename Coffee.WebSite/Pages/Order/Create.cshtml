@@ -1,43 +1,71 @@
 @page
 @model Coffee.WebSite.Pages.Order.CreateModel
 
-@{ ViewData["Title"] = "Agregar Orden"; }
+@{
+    ViewData["Title"] = "Agregar Orden";
+}
 
 <div class="container mt-4">
     <h2>Agregar Orden</h2>
     <hr />
+
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="alert alert-danger">@Model.ErrorMessage</div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
+
     <div class="row">
         <div class="col-md-6">
-            <form method="post">
+            <form method="post" novalidate>
                 <div class="mb-3">
                     <label asp-for="OrderDto.UserId" class="form-label">Usuario ID</label>
-                    <input asp-for="OrderDto.UserId" class="form-control" type="number" required />
+                    <input asp-for="OrderDto.UserId" class="form-control" type="number" required min="1" />
+                    <span asp-validation-for="OrderDto.UserId" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label asp-for="OrderDto.CustomerId" class="form-label">Cliente ID</label>
-                    <input asp-for="OrderDto.CustomerId" class="form-control" type="number" />
+                    <label asp-for="OrderDto.CustomerId" class="form-label">Cliente ID (Opcional)</label>
+                    <input asp-for="OrderDto.CustomerId" class="form-control" type="number" min="1" />
+                    <span asp-validation-for="OrderDto.CustomerId" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
                     <label asp-for="OrderDto.PaymentMethodId" class="form-label">Método de Pago ID</label>
-                    <input asp-for="OrderDto.PaymentMethodId" class="form-control" type="number" required />
+                    <input asp-for="OrderDto.PaymentMethodId" class="form-control" type="number" required min="1" />
+                    <span asp-validation-for="OrderDto.PaymentMethodId" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
                     <label asp-for="OrderDto.Total" class="form-label">Total</label>
-                    <input asp-for="OrderDto.Total" class="form-control" type="number" step="0.01" required />
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input asp-for="OrderDto.Total" class="form-control" type="number" step="0.01" required min="0" />
+                    </div>
+                    <span asp-validation-for="OrderDto.Total" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label asp-for="OrderDto.Status" class="form-label">Estado</label>
-                    <input asp-for="OrderDto.Status" class="form-control" value="Pending" />
+                    <label asp-for="OrderDto.Status" class="form-label">Estado de la Orden</label>
+                    <select asp-for="OrderDto.Status" class="form-select">
+                        <option value="Pendiente" selected>Pendiente</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                    <span asp-validation-for="OrderDto.Status" class="text-danger"></span>
                 </div>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success">Crear</button>
-                    <a asp-page="./List" class="btn btn-secondary">Cancelar</a>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success px-4">Crear Orden</button>
+                    <a asp-page="./List" class="btn btn-secondary px-4">Cancelar</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
