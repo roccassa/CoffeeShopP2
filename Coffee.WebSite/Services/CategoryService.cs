@@ -10,7 +10,7 @@ public class CategoryService : ICategoryService
 {
     private readonly HttpClient _client;
     private readonly string _baseUrl = "http://localhost:5140/";
-    private readonly string _endpoint = "api/Categories";
+    private readonly string _endpoint = "api/categories";
 
     public CategoryService(HttpClient client)
     {

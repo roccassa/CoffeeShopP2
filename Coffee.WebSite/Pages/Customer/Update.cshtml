@@ -1,29 +1,157 @@
 ﻿@page "{id:int}"
 @model Coffee.WebSite.Pages.Customer.UpdateModel
+@{
+    ViewData["Title"] = "Editar Cliente";
+}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Editar Cliente</h2>
-        <a asp-page="./List" class="btn btn-secondary">Volver</a>
+@section Styles {
+    <style>
+        body {
+            background-color: #f8f1e9 !important;
+        }
+
+        .main-content {
+            background-color: #fdfbf7;
+            min-height: 100vh;
+            padding-bottom: 4rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #2c1d11, #6f4e37);
+            color: white;
+            padding: 2rem 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2.5rem;
+        }
+
+        .card-custom {
+            border: none;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.06);
+            padding: 2.5rem;
+        }
+
+        .form-label {
+            color: #2c1d11;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group-text {
+            background-color: #fdfbf7;
+            border-color: #e9e4dc;
+            color: #6f4e37;
+        }
+
+        .form-control {
+            border-color: #e9e4dc;
+            padding: 0.65rem 0.75rem;
+            background-color: #fdfbf7;
+            font-size: 0.95rem;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: #6f4e37;
+            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
+        }
+
+        /* Botones integrados a la identidad corporativa */
+        .btn-coffee-update {
+            background-color: #2c1d11;
+            border-color: #2c1d11;
+            color: white;
+            font-weight: 600;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-coffee-update:hover {
+            background-color: #6f4e37;
+            border-color: #6f4e37;
+            color: white;
+        }
+
+        .btn-coffee-cancel {
+            background-color: transparent;
+            border: 1px solid #c8b195;
+            color: #6f4e37;
+            font-weight: 600;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-coffee-cancel:hover {
+            background-color: #f5e8d3;
+            color: #2c1d11;
+            border-color: #6f4e37;
+        }
+    </style>
+}
+
+<div class="main-content">
+    <div class="page-header text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold">Actualizar Datos de Cliente</h1>
+            <p class="lead mb-0">Modifica la información de contacto o ajusta manualmente el saldo de puntos</p>
+        </div>
     </div>
-    <div class="card shadow-sm" style="max-width: 600px;">
-        <div class="card-body">
-            <form method="post">
-                <input type="hidden" name="CustomerDto.Id" value="@Model.CustomerDto.Id" />
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Nombre</label>
-                    <input type="text" name="CustomerDto.Name" value="@Model.CustomerDto.Name" class="form-control" required />
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="card card-custom">
+                    <form method="post" autocomplete="off">
+                        <input type="hidden" name="CustomerDto.Id" value="@Model.CustomerDto.Id" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nombre Completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input type="text" name="CustomerDto.Name" value="@Model.CustomerDto.Name" class="form-control" required autofocus />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Correo Electrónico</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                                <input type="email" name="CustomerDto.Email" value="@Model.CustomerDto.Email" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Puntos de Lealtad Disponibles</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
+                                <input type="number" name="CustomerDto.LoyaltyPoints" value="@Model.CustomerDto.LoyaltyPoints" class="form-control" min="0" required />
+                            </div>
+                            <div class="form-text text-muted small mt-1">
+                                Nota: Modificar este valor alterará directamente los beneficios canjeables actuales del cliente en caja.
+                            </div>
+                        </div>
+
+                        <hr class="text-muted my-4" />
+
+                        <div class="d-flex justify-content-end gap-3">
+                            <a asp-page="./List" class="btn btn-coffee-cancel">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-coffee-update">
+                                <i class="bi bi-pencil-square me-1"></i> Actualizar Cambios
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Email</label>
-                    <input type="email" name="CustomerDto.Email" value="@Model.CustomerDto.Email" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Puntos de Lealtad</label>
-                    <input type="number" name="CustomerDto.LoyaltyPoints" value="@Model.CustomerDto.LoyaltyPoints" class="form-control" min="0" />
-                </div>
-                <button type="submit" class="btn btn-warning">Actualizar</button>
-            </form>
+
+            </div>
         </div>
     </div>
 </div>

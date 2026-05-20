@@ -1,69 +1,168 @@
 ﻿@page
 @model Coffee.WebSite.Pages.Category.ListModel
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Listado de Categorías de Café</h2>
+@{
+    ViewData["Title"] = "Categorías de Café";
+}
+
+@section Styles {
+    <style>
+        body {
+            background-color: #f8f1e9 !important; /* Color crema principal */
+        }
+
+        .main-content {
+            background-color: #fdfbf7;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #2c1d11, #6f4e37);
+            color: white;
+            padding: 2rem 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background-color: #2c1d11;
+            color: #f5e8d3;
+        }
+
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+        }
+
+        .table td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        .btn-success {
+            background-color: #6f4e37;
+            border-color: #6f4e37;
+            font-weight: 500;
+        }
+
+        .btn-success:hover {
+            background-color: #2c1d11;
+            border-color: #2c1d11;
+        }
+
+        .form-control {
+            border-color: #e9e4dc;
+            background-color: #fdfbf7;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: #6f4e37;
+            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
+        }
+
+        .category-badge {
+            font-size: 0.95rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            background-color: #f5e8d3;
+            color: #2c1d11;
+            display: inline-block;
+            border: 1px solid #c8b195;
+        }
+    </style>
+}
+
+<div class="main-content">
+    <div class="page-header text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold">Categorías del Menú</h1>
+            <p class="lead mb-0">Organiza las secciones del menú comercial que aparecen en la pantalla de toma de órdenes</p>
+        </div>
     </div>
 
-    <form method="get" class="mb-4">
-        <div class="row g-3 align-items-center">
-            <div class="col-md-6">
-                <input type="text" 
-                       name="searchTerm" 
-                       value="@Model.SearchTerm"
-                       class="form-control" 
-                       placeholder="Buscar categoría por nombre o ID..." />
+    <div class="container">
+        <form method="get" class="mb-4">
+            @Html.AntiForgeryToken()
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                               class="form-control" 
+                               placeholder="Buscar categoría por nombre o ID..." />
+                        <button id="btnSearch" class="btn btn-primary" style="background-color:#2c1d11; border:none;">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a asp-page="./Create" class="btn btn-success">
+                        <i class="bi bi-folder-plus"></i> Agregar Nueva Categoría
+                    </a>
+                </div>
             </div>
-            
-            <div class="col-md-4">
-                <button id="btnSearch" class="btn btn-primary me-2">Buscar</button>
-                <a asp-page="./Create" class="btn btn-success">Agregar Nueva</a>
-            </div>
-        </div>
-    </form>
-    
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Nombre de Categoría</th>
-                                <th>Descripción</th>
-                                <th class="text-end pe-4">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @if (Model.Categories != null && Model.Categories.Any())
-                        {
-                            @foreach (var category in Model.Categories)
+        </form>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4" style="width: 15%;">ID</th>
+                                    <th style="width: 30%;">Nombre de Categoría</th>
+                                    <th style="width: 40%;">Descripción</th>
+                                    <th class="text-end pe-4" style="width: 15%;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.Categories != null && Model.Categories.Any())
+                            {
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-muted">#@category.Id</td>
+                                        <td>
+                                            <span class="category-badge fw-bold">
+                                                <i class="bi bi-tag-fill text-brown me-1" style="color: #6f4e37;"></i> @category.Name
+                                            </span>
+                                        </td>
+                                        <td class="text-secondary small">@category.Description</td>
+                                        <td class="text-end pe-4">
+                                            <a asp-page="./Update" asp-route-id="@category.Id" class="btn btn-warning btn-sm me-2">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </a>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteCategory(@category.Id)">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
-                                    <td class="ps-4">@category.Id</td>
-                                    <td class="fw-bold">@category.Name</td>
-                                    <td>@category.Description</td>
-                                    <td class="text-end pe-4">
-                                        <a asp-page="./Update" asp-route-id="@category.Id" class="btn btn-warning btn-sm me-1">Editar</a>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteCategory(@category.Id)">
-                                            Eliminar
-                                        </button>
+                                    <td colspan="4" class="text-center text-muted py-5">
+                                        <i class="bi bi-folder-x display-6 d-block mb-2 text-muted"></i>
+                                        No se encontraron categorías comerciales registradas.
                                     </td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
-                                    No se encontraron categorías registradas.
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,40 +172,8 @@
 @section Scripts {
     <script>
         function deleteCategory(id) {
-            if (!confirm("¿Estás seguro de que deseas eliminar esta categoría de café?")) {
+            if (!confirm("¿Estás completamente seguro de que deseas eliminar esta categoría? Esto podría desvincular los productos asociados a ella.")) 
                 return;
-            }
-
-            // Construcción limpia de la URL apuntando al Handler OnPostDeleteAsync
-            const url = `/Category/List?handler=Delete&id=${id}`;
-
-            fetch(url, {
-                method: 'POST' 
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error en el servidor: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(result => {
-                // Evaluamos si el backend reportó éxito en la operación
-                if (result.success === true || result.data === true) {
-                    alert("Categoría eliminada correctamente");
-                    location.reload(); // Recarga la página para refrescar la grilla de datos
-                } else {
-                    alert("Error al eliminar: " + (result.errors?.join(", ") || "Inconsistencia en el servidor"));
-                }
-            })
-            .catch(error => {
-                console.error("Detalle del error crítico:", error);
-                alert("Ocurrió un error crítico al procesar la solicitud: " + error.message);
-            });
-        }
-
-
-        function deleteCategory(id) {
-            if (!confirm("¿Estás seguro de que deseas eliminar esta categoría?")) return;
 
             const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
             const url = `/Category/List?handler=Delete&id=${id}`;
@@ -117,19 +184,19 @@
                     'RequestVerificationToken': token ?? ''
                 }
             })
-                .then(response => {
-                    if (!response.ok) throw new Error(`Error: ${response.status}`);
-                    return response.json();
-                })
-                .then(result => {
-                    if (result === true || result.success === true) {
-                        alert("Categoría eliminada correctamente");
-                        location.reload();
-                    } else {
-                        alert("Error al eliminar");
-                    }
-                })
-                .catch(error => alert("Error: " + error.message));
+            .then(response => {
+                if (!response.ok) throw new Error(`Error en la petición: ${response.status}`);
+                return response.json();
+            })
+            .then(result => {
+                if (result === true || result.success === true) {
+                    alert("✅ Categoría removida con éxito");
+                    location.reload();
+                } else {
+                    alert("❌ Error al eliminar la categoría del catálogo");
+                }
+            })
+            .catch(error => alert("Error crítico en la comunicación: " + error.message));
         }
     </script>
 }

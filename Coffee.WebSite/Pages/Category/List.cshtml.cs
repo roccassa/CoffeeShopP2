@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Coffee.Core.Dto;
+using System.Collections.Generic;           // ← Agregar
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Coffee.Core.Http;
 using Coffee.WebSite.Services.Interfaces;
 
 namespace Coffee.WebSite.Pages.Category;
@@ -19,28 +23,54 @@ public class ListModel : PageModel
         Categories = new List<CategoryDto>();
         _service = service;
     }
+    
+    [BindProperty]
+    public InputModel Input { get; set; }
 
-    // Se ejecuta automáticamente al cargar la página (Petición GET)
+    // 2. Definición de la estructura de Input
+    public class InputModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+    
+    public IActionResult OnPost()
+    {
+        if (Input.Username?.Trim().ToLower() == "admin" && Input.Password == "1234")
+        {
+            HttpContext.Session.SetString("IsLoggedIn", "true");
+            HttpContext.Session.SetString("Username", Input.Username);
+
+            // Ruta correcta según tu estructura
+            return RedirectToPage("/Category/List");
+        }
+
+        ViewData["Error"] = "Usuario o contraseña incorrectos";
+        return Page();
+    }
+    
+// Se ejecuta automáticamente al cargar la página (Petición GET)
     public async Task<IActionResult> OnGetAsync(string? searchTerm)
     {
+        // Protección con Session
+        if (HttpContext.Session.GetString("IsLoggedIn") != "true")
+        {
+            return RedirectToPage("/Account/Login");
+        }
+
         SearchTerm = searchTerm ?? string.Empty;
 
-        // Ahora recibe directamente la lista limpia de categorías
-        var data = await _service.GetAllAsync();
+        // "response" ahora contiene directamente el List<CategoryDto>
+        var response = await _service.GetAllAsync();
     
-        if (data != null)
+        if (response != null)
         {
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
-            {
-                Categories = data.Where(c =>
-                    c.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (c.Id.ToString() == SearchTerm)
-                ).ToList();
-            }
-            else
-            {
-                Categories = data;
-            }
+            // Filtramos directamente sobre la variable response sin usar .Data
+            Categories = string.IsNullOrWhiteSpace(SearchTerm) 
+                ? response 
+                : response.Where(c => 
+                    c.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) || 
+                    c.Id.ToString() == SearchTerm).ToList();
         }
 
         return Page();
@@ -49,6 +79,11 @@ public class ListModel : PageModel
     // Handler especializado para traer los datos de un solo registro vía AJAX
     public async Task<JsonResult> OnGetGetByIdAsync(int id)
     {
+        if (HttpContext.Session.GetString("IsLoggedIn") != "true")
+        {
+            return new JsonResult(new { success = false, message = "No autorizado" });
+        }
+        
         var response = await _service.GetByIdAsync(id);
         return new JsonResult(response);
     }

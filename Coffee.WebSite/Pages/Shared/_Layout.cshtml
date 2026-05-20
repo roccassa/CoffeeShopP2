@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/Coffee.WebSite.styles.css" asp-append-version="true"/>
+    @await RenderSectionAsync("Styles", required: false) 
 </head>
 <body>
 <header>
@@ -52,6 +53,11 @@
                     </li>
                 </ul>
             </div>
+            
+            <div class="ms-auto">
+                <a asp-page="/Account/Login" class="btn btn-outline-light">Cerrar Sesión</a>
+            </div>
+            
         </div>
     </nav>
 </header>

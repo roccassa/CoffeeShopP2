@@ -1,64 +1,212 @@
 @page
 @model Coffee.WebSite.Pages.Order.ListModel
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Listado de Órdenes</h2>
-    </div>
-    <form method="get" class="mb-4">
-        @Html.AntiForgeryToken()
-        <div class="row g-3 align-items-center">
-            <div class="col-md-6">
-                <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                       class="form-control" placeholder="Buscar por estado o ID..." />
-            </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary me-2">Buscar</button>
-                <a asp-page="./Create" class="btn btn-success">Agregar Nuevo</a>
-            </div>
+@{
+    ViewData["Title"] = "Listado de Órdenes";
+}
+
+@section Styles {
+    <style>
+        body {
+            background-color: #f8f1e9 !important; /* Color crema principal */
+        }
+
+        .main-content {
+            background-color: #fdfbf7;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #2c1d11, #6f4e37);
+            color: white;
+            padding: 2rem 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background-color: #2c1d11;
+            color: #f5e8d3;
+        }
+
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+        }
+
+        .table td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        .btn-success {
+            background-color: #6f4e37;
+            border-color: #6f4e37;
+            font-weight: 500;
+        }
+
+        .btn-success:hover {
+            background-color: #2c1d11;
+            border-color: #2c1d11;
+        }
+
+        .form-control {
+            border-color: #e9e4dc;
+            background-color: #fdfbf7;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: #6f4e37;
+            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
+        }
+
+        .order-id {
+            color: #2c1d11;
+        }
+
+        .total-amount {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1.05rem;
+        }
+
+        /* Badges estilizados y dinámicos para los estados */
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-pendiente {
+            background-color: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fcd34d;
+        }
+        .status-completado {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        .status-cancelado {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+    </style>
+}
+
+<div class="main-content">
+    <div class="page-header text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold">Historial de Órdenes</h1>
+            <p class="lead mb-0">Consulta y gestiona las transacciones comerciales globales y estados de tickets</p>
         </div>
-    </form>
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">ID</th>
-                        <th>Usuario ID</th>
-                        <th>Cliente ID</th>
-                        <th>Método Pago ID</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th class="text-end pe-4">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @if (Model.Orders != null && Model.Orders.Any())
-                {
-                    @foreach (var order in Model.Orders)
+    </div>
+
+    <div class="container">
+        <form method="get" class="mb-4">
+            @Html.AntiForgeryToken()
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                               class="form-control" placeholder="Buscar por estado o ID de orden..." />
+                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a asp-page="./Create" class="btn btn-success">
+                        <i class="bi bi-receipt-cutoff"></i> Levantar Nueva Orden
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4" style="width: 10%;">ID</th>
+                            <th style="width: 15%;">Usuario (Cajero)</th>
+                            <th style="width: 15%;">Cliente</th>
+                            <th style="width: 18%;">Método de Pago</th>
+                            <th style="width: 14%;">Total</th>
+                            <th style="width: 13%;">Estado</th>
+                            <th class="text-end pe-4" style="width: 15%;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.Orders != null && Model.Orders.Any())
+                    {
+                        @foreach (var order in Model.Orders)
+                        {
+                            // Lógica de CSS según el estado de la orden
+                            string badgeClass = "status-pendiente";
+                            if (order.Status == "Completado") badgeClass = "status-completado";
+                            else if (order.Status == "Cancelado") badgeClass = "status-cancelado";
+
+                            <tr>
+                                <td class="ps-4 fw-bold order-id">#@order.Id</td>
+                                <td class="text-secondary small"><i class="bi bi-person-badge me-1"></i> ID: @order.UserId</td>
+                                <td class="text-secondary small">
+                                    @if (order.CustomerId.HasValue || order.CustomerId > 0)
+                                    {
+                                        <span><i class="bi bi-person-fill me-1"></i> ID: @order.CustomerId</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted italic">Público Gral.</span>
+                                    }
+                                </td>
+                                <td class="text-secondary small"><i class="bi bi-credit-card-2-back me-1"></i> ID: @order.PaymentMethodId</td>
+                                <td>
+                                    <span class="total-amount">$@order.Total.ToString("F2")</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge @badgeClass">
+                                        @order.Status
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a asp-page="./Update" asp-route-id="@order.Id" class="btn btn-warning btn-sm me-2">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteOrder(@order.Id)">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td class="ps-4">@order.Id</td>
-                            <td>@order.UserId</td>
-                            <td>@order.CustomerId</td>
-                            <td>@order.PaymentMethodId</td>
-                            <td>$@order.Total</td>
-                            <td><span class="badge bg-info">@order.Status</span></td>
-                            <td class="text-end pe-4">
-                                <a asp-page="./Update" asp-route-id="@order.Id" class="btn btn-warning btn-sm me-1">Editar</a>
-                                <button class="btn btn-danger btn-sm" onclick="deleteOrder(@order.Id)">Eliminar</button>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="bi bi-receipt display-6 d-block mb-2 text-muted"></i>
+                                No se encontraron registros de órdenes en la bitácora actual.
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-4">No se encontraron órdenes.</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -66,18 +214,25 @@
 @section Scripts {
     <script>
         function deleteOrder(id) {
-            if (!confirm("¿Deseas eliminar esta orden?")) return;
+            if (!confirm("¿Estás completamente seguro de que deseas eliminar esta orden? Esto eliminará de forma irreversible el registro financiero de la base de datos.")) 
+                return;
+                
             const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
             fetch(`/Order/List?handler=Delete&id=${id}`, {
                 method: 'POST',
                 headers: { 'RequestVerificationToken': token ?? '' }
             })
             .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
             .then(result => {
-                if (result === true) { alert("Orden eliminada correctamente"); location.reload(); }
-                else { alert("Error al eliminar la orden"); }
+                if (result === true || result.success === true || result === "true") {
+                    alert("✅ Orden eliminada de la bitácora");
+                    location.reload();
+                } else {
+                    alert("❌ Error al intentar eliminar la orden");
+                }
             })
-            .catch(e => alert("Error: " + e.message));
+            .catch(e => alert("Error crítico en la solicitud: " + e.message));
         }
     </script>
 }

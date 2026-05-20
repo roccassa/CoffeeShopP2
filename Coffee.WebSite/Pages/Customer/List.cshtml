@@ -1,87 +1,204 @@
 ﻿@page
 @model Coffee.WebSite.Pages.Customer.ListModel
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Listado de Clientes</h2>
+@{
+ViewData["Title"] = "Listado de Clientes";
+}
+
+@section Styles {
+<style>
+    body {
+        background-color: #f8f1e9 !important; /* Color crema principal */
+    }
+
+    .main-content {
+        background-color: #fdfbf7;
+        min-height: 100vh;
+        padding-bottom: 3rem;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #2c1d11, #6f4e37);
+        color: white;
+        padding: 2rem 0;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background-color: #2c1d11;
+        color: #f5e8d3;
+    }
+
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 0.75rem;
+    }
+
+    .table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+    }
+
+    .btn-success {
+        background-color: #6f4e37;
+        border-color: #6f4e37;
+        font-weight: 500;
+    }
+
+    .btn-success:hover {
+        background-color: #2c1d11;
+        border-color: #2c1d11;
+    }
+
+    .form-control {
+        border-color: #e9e4dc;
+        background-color: #fdfbf7;
+    }
+
+    .form-control:focus {
+        background-color: #ffffff;
+        border-color: #6f4e37;
+        box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
+    }
+
+    .customer-name {
+        color: #2c1d11;
+        font-size: 1rem;
+    }
+
+    /* Badge dinámico para los puntos de lealtad */
+    .points-badge {
+        background-color: #fdf6e2;
+        color: #b45309;
+        border: 1px solid #fcd34d;
+        font-weight: 600;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        display: inline-block;
+    }
+</style>
+}
+
+<div class="main-content">
+    <div class="page-header text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold">Programa de Clientes</h1>
+            <p class="lead mb-0">Administra los perfiles de la comunidad y sus beneficios acumulados</p>
+        </div>
     </div>
 
-    <form method="get" class="mb-4">
-        @Html.AntiForgeryToken()
-        <div class="row g-3 align-items-center">
-            <div class="col-md-6">
-                <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                       class="form-control" placeholder="Buscar cliente por nombre, email o ID..." />
+    <div class="container">
+        <form method="get" class="mb-4">
+            @Html.AntiForgeryToken()
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                               class="form-control"
+                               placeholder="Buscar cliente por nombre, email o ID..." />
+                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a asp-page="./Create" class="btn btn-success">
+                        <i class="bi bi-person-plus-fill"></i> Registrar Nuevo Cliente
+                    </a>
+                </div>
             </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary me-2">Buscar</button>
-                <a asp-page="./Create" class="btn btn-success">Agregar Nuevo</a>
-            </div>
-        </div>
-    </form>
+        </form>
 
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
                     <tr>
-                        <th class="ps-4">ID</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Puntos de Lealtad</th>
-                        <th class="text-end pe-4">Acciones</th>
+                        <th class="ps-4" style="width: 12%;">ID</th>
+                        <th style="width: 28%;">Nombre</th>
+                        <th style="width: 30%;">Correo Electrónico</th>
+                        <th style="width: 15%;">Puntos Acumulados</th>
+                        <th class="text-end pe-4" style="width: 15%;">Acciones</th>
                     </tr>
-                </thead>
-                <tbody>
-                @if (Model.Customers != null && Model.Customers.Any())
-                {
+                    </thead>
+                    <tbody>
+                    @if (Model.Customers != null && Model.Customers.Any())
+                    {
                     @foreach (var customer in Model.Customers)
                     {
-                        <tr>
-                            <td class="ps-4">@customer.Id</td>
-                            <td class="fw-bold">@customer.Name</td>
-                            <td>@customer.Email</td>
-                            <td>@customer.LoyaltyPoints</td>
-                            <td class="text-end pe-4">
-                                <a asp-page="./Update" asp-route-id="@customer.Id" class="btn btn-warning btn-sm me-1">Editar</a>
-                                <button class="btn btn-danger btn-sm" onclick="deleteCustomer(@customer.Id)">Eliminar</button>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">No se encontraron clientes.</td>
+                        <td class="ps-4 fw-bold text-muted">#@customer.Id</td>
+                        <td>
+                            <span class="customer-name fw-bold">@customer.Name</span>
+                        </td>
+                        <td class="text-secondary small">
+                            <i class="bi bi-envelope text-muted me-1"></i> @customer.Email
+                        </td>
+                        <td>
+                                    <span class="points-badge">
+                                        <i class="bi bi-star-fill text-warning me-1"></i> @customer.LoyaltyPoints pts
+                                    </span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <a asp-page="./Update" asp-route-id="@customer.Id" class="btn btn-warning btn-sm me-2">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCustomer(@customer.Id)">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </td>
                     </tr>
-                }
-                </tbody>
-            </table>
+                    }
+                    }
+                    else
+                    {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="bi bi-people display-6 d-block mb-2 text-muted"></i>
+                            No se encontraron clientes registrados en la base de datos.
+                        </td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        function deleteCustomer(id) {
-            if (!confirm("¿Deseas eliminar este cliente?")) return;
+<script>
+    function deleteCustomer(id) {
+        if (!confirm("¿Estás completamente seguro de que deseas eliminar la ficha de este cliente? Esta acción alterará sus puntos acumulados."))
+            return;
 
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
 
-            fetch(`/Customer/List?handler=Delete&id=${id}`, {
-                method: 'POST',
-                headers: { 'RequestVerificationToken': token ?? '' }
-            })
+        fetch(`/Customer/List?handler=Delete&id=${id}`, {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': token ?? '' }
+        })
             .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
             .then(result => {
-                if (result === true) {
-                    alert("Cliente eliminado correctamente");
+                if (result === true || result.success === true || result === "true") {
+                    alert("✅ Cliente removido con éxito");
                     location.reload();
                 } else {
-                    alert("Error al eliminar el cliente");
+                    alert("❌ Error al remover el registro del cliente");
                 }
             })
-            .catch(e => alert("Error: " + e.message));
-        }
-    </script>
+            .catch(e => alert("Error crítico en la comunicación con el servidor: " + e.message));
+    }
+</script>
 }
