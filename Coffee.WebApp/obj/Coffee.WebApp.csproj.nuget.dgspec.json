@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.WebApp\\Coffee.WebApp.csproj": {}
+    "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.WebApp\\Coffee.WebApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.WebApp\\Coffee.WebApp.csproj": {
+    "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.WebApp\\Coffee.WebApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.WebApp\\Coffee.WebApp.csproj",
+        "projectUniqueName": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.WebApp\\Coffee.WebApp.csproj",
         "projectName": "Coffee.WebApp",
-        "projectPath": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.WebApp\\Coffee.WebApp.csproj",
-        "packagesPath": "C:\\Users\\Antonio\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.WebApp\\obj\\",
+        "projectPath": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.WebApp\\Coffee.WebApp.csproj",
+        "packagesPath": "C:\\Users\\yo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.WebApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Antonio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\yo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
@@ -54,7 +53,7 @@
             "Microsoft.AspNetCore.App.Internal.Assets": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.2, )",
+              "version": "[10.0.6, )",
               "autoReferenced": true
             },
             "Microsoft.AspNetCore.Components.WebAssembly": {
@@ -68,19 +67,19 @@
             },
             "Microsoft.DotNet.HotReload.WebAssembly.Browser": {
               "target": "Package",
-              "version": "[10.0.102, )",
+              "version": "[10.0.202, )",
               "autoReferenced": true
             },
             "Microsoft.NET.ILLink.Tasks": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.2, )",
+              "version": "[10.0.6, )",
               "autoReferenced": true
             },
             "Microsoft.NET.Sdk.WebAssembly.Pack": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.2, )",
+              "version": "[10.0.6, )",
               "autoReferenced": true
             }
           },
@@ -98,7 +97,7 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.NETCore.App.Runtime.Mono.browser-wasm",
-              "version": "[10.0.2, 10.0.2]"
+              "version": "[10.0.6, 10.0.6]"
             }
           ],
           "frameworkReferences": {
@@ -106,7 +105,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
