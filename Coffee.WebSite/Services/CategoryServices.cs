@@ -8,7 +8,7 @@ namespace Coffee.WebSite.Services;
 
 public class CategoryServices : ICategoryServices
 {
-    private readonly string _baseUrl = "http://localhost:5119/";
+    private readonly string _baseUrl = "http://localhost:5140/";
     private readonly string _endpoint = "api/categories";
 
     public async Task<Response<List<CategoryDto>>> GetAllAsync()

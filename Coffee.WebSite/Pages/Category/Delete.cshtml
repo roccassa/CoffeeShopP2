@@ -1,0 +1,38 @@
+﻿@page "{id:int}"
+@model Coffee.WebSite.Pages.Category.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Category";
+}
+
+<div class="container">
+    <h2 class="text-danger">Delete Category</h2>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <div class="alert alert-warning">
+        <strong>Are you sure you want to delete this category?</strong>
+        This action cannot be undone.
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Category.Id</dd>
+        <dt class="col-sm-2">Name</dt>
+        <dd class="col-sm-10">@Model.Category.Name</dd>
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Category.Description</dd>
+    </dl>
+
+    <form method="post">
+        <input type="hidden" asp-for="Category.Id" />
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a asp-page="./List" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
