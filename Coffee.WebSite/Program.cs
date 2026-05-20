@@ -20,6 +20,14 @@ builder.Services.AddHttpClient<IRoleService, RoleService>()
         ServerCertificateCustomValidationCallback =
             HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
     });
+
+builder.Services.AddHttpClient<ICustomerService, CustomerService>()
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -40,7 +40,7 @@ builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
 
 builder.Services.AddScoped<IRoleService, RoleService>();
-
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 var app = builder.Build();
 
