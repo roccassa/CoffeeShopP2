@@ -5,8 +5,20 @@ using Coffee.Api.DataAccess;
 using Coffee.Api.DataAccess.Interfaces;
 using Coffee.Api.Repositories;
 using Coffee.Api.Repositories.Interfaces;
+using Coffee.Api.Services;
+using Coffee.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 // REGISTRO DE SERVICIOS
 builder.Services.AddControllers(); //sin esto no sirven los controladores 
@@ -26,6 +38,10 @@ builder.Services.AddScoped<IProductVariantRepository, ProductVariantRepository>(
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
+
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,8 +50,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowAll");
+    app.UseHttpsRedirection();
 }
-
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

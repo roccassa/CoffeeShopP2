@@ -1,0 +1,21 @@
+﻿@page "{id:int}"
+@model Coffee.WebSite.Pages.Role.UpdateModel
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Editar Rol</h2>
+        <a asp-page="./List" class="btn btn-secondary">Volver</a>
+    </div>
+    <div class="card shadow-sm" style="max-width: 500px;">
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" name="RoleDto.Id" value="@Model.RoleDto.Id" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre del Rol</label>
+                    <input type="text" name="RoleDto.Name" value="@Model.RoleDto.Name" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-warning">Actualizar</button>
+            </form>
+        </div>
+    </div>
+</div>

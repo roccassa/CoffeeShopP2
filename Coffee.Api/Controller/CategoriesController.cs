@@ -1,113 +1,70 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Coffee.Api.Repositories.Interfaces;
-using Coffee.Core.Dto;
-using Coffee.Core.Http;
+using Coffee.Core.Entities;
 
 namespace Coffee.Api.Controller;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]")] 
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryRepository _categoryRepository;
 
+    
     public CategoriesController(ICategoryRepository categoryRepository)
     {
         _categoryRepository = categoryRepository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<Response<List<CategoryDto>>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var categories = await _categoryRepository.GetAllAsync();
-        var response = new Response<List<CategoryDto>>
-        {
-            Data = categories.Select(c => new CategoryDto
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Description = c.Description
-            }).ToList()
-        };
-        return Ok(response);
+        return Ok(categories);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<Response<CategoryDto>>> GetById(int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
     {
-        var response = new Response<CategoryDto>();
         var category = await _categoryRepository.GetByIdAsync(id);
-        if (category == null)
-        {
-            response.Errors.Add("Category not found");
-            return NotFound(response);
-        }
-        response.Data = new CategoryDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-        return Ok(response);
+        if (category == null) return NotFound();
+        return Ok(category);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Response<CategoryDto>>> Create([FromBody] CategoryDto dto)
+    public async Task<IActionResult> Create([FromBody] Category category)
     {
-        var response = new Response<CategoryDto>();
-        var category = new Coffee.Core.Entities.Category
+        // Guardamos la entidad devuelta por el repositorio
+        var createdCategory = await _categoryRepository.SaveAsync(category);
+        
+        // Evaluamos si el objeto no es nulo en lugar de buscar un bool
+        if (createdCategory != null) 
         {
-            Name = dto.Name,
-            Description = dto.Description
-        };
-        var result = await _categoryRepository.SaveAsync(category);
-        if (!result)
-        {
-            response.Errors.Add("Error creating category");
-            return BadRequest(response);
+            // Siguiendo las buenas prácticas REST, devolvemos el objeto creado
+            return Ok(createdCategory);
         }
-        response.Data = dto;
-        return Ok(response);
+        return BadRequest("Error creating category");
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<Response<CategoryDto>>> Update(int id, [FromBody] CategoryDto dto)
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] Category category)
     {
-        var response = new Response<CategoryDto>();
-        var existing = await _categoryRepository.GetByIdAsync(id);
-        if (existing == null)
+        // Guardamos la entidad devuelta por el repositorio
+        var updatedCategory = await _categoryRepository.UpdateAsync(category);
+        
+        // Evaluamos si el objeto no es nulo
+        if (updatedCategory != null) 
         {
-            response.Errors.Add("Category not found");
-            return NotFound(response);
+            return Ok(updatedCategory);
         }
-        var category = new Coffee.Core.Entities.Category
-        {
-            Id = id,
-            Name = dto.Name,
-            Description = dto.Description
-        };
-        var result = await _categoryRepository.UpdateAsync(category);
-        if (!result)
-        {
-            response.Errors.Add("Error updating category");
-            return BadRequest(response);
-        }
-        dto.Id = id;
-        response.Data = dto;
-        return Ok(response);
+        return BadRequest("Error updating category");
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult<Response<bool>>> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
     {
-        var response = new Response<bool>();
         var result = await _categoryRepository.DeleteAsync(id);
-        if (!result)
-        {
-            response.Errors.Add("Error deleting category");
-            return BadRequest(response);
-        }
-        response.Data = true;
-        return Ok(response);
+        if (result) return Ok("Category deleted");
+        return BadRequest("Error deleting category");
     }
 }

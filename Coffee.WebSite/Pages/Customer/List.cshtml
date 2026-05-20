@@ -1,0 +1,87 @@
+﻿@page
+@model Coffee.WebSite.Pages.Customer.ListModel
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Listado de Clientes</h2>
+    </div>
+
+    <form method="get" class="mb-4">
+        @Html.AntiForgeryToken()
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                       class="form-control" placeholder="Buscar cliente por nombre, email o ID..." />
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary me-2">Buscar</button>
+                <a asp-page="./Create" class="btn btn-success">Agregar Nuevo</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Puntos de Lealtad</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model.Customers != null && Model.Customers.Any())
+                {
+                    @foreach (var customer in Model.Customers)
+                    {
+                        <tr>
+                            <td class="ps-4">@customer.Id</td>
+                            <td class="fw-bold">@customer.Name</td>
+                            <td>@customer.Email</td>
+                            <td>@customer.LoyaltyPoints</td>
+                            <td class="text-end pe-4">
+                                <a asp-page="./Update" asp-route-id="@customer.Id" class="btn btn-warning btn-sm me-1">Editar</a>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCustomer(@customer.Id)">Eliminar</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No se encontraron clientes.</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteCustomer(id) {
+            if (!confirm("¿Deseas eliminar este cliente?")) return;
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            fetch(`/Customer/List?handler=Delete&id=${id}`, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token ?? '' }
+            })
+            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .then(result => {
+                if (result === true) {
+                    alert("Cliente eliminado correctamente");
+                    location.reload();
+                } else {
+                    alert("Error al eliminar el cliente");
+                }
+            })
+            .catch(e => alert("Error: " + e.message));
+        }
+    </script>
+}

@@ -1,8 +1,18 @@
-﻿namespace Coffee.Core.Dto;
+﻿using Coffee.Core.Entities;
 
-public class CategoryDto
+namespace Coffee.Core.Dto;
+
+public class CategoryDto : DtoBase
 {
-    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
+    
+    public CategoryDto() { }
+
+    public CategoryDto(Category category)
+    {
+        Id = category.Id;
+        Name = category.Name;
+        Description = category.Description;
+    }
 }

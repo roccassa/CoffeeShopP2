@@ -1,0 +1,26 @@
+﻿@page "{id:int}"
+@model Coffee.WebSite.Pages.Category.UpdateModel
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Editar Categoría</h2>
+        <a asp-page="./List" class="btn btn-secondary">Volver</a>
+    </div>
+
+    <div class="card shadow-sm" style="max-width: 600px;">
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" name="CategoryDto.Id" value="@Model.CategoryDto.Id" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre</label>
+                    <input type="text" name="CategoryDto.Name" value="@Model.CategoryDto.Name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Descripción</label>
+                    <textarea name="CategoryDto.Description" class="form-control" rows="3">@Model.CategoryDto.Description</textarea>
+                </div>
+                <button type="submit" class="btn btn-warning">Actualizar</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+﻿@page
+@model Coffee.WebSite.Pages.Role.CreateModel
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Nuevo Rol</h2>
+        <a asp-page="./List" class="btn btn-secondary">Volver</a>
+    </div>
+    <div class="card shadow-sm" style="max-width: 500px;">
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre del Rol</label>
+                    <input type="text" name="RoleDto.Name" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </form>
+        </div>
+    </div>
+</div>

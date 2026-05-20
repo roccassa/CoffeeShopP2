@@ -1,0 +1,29 @@
+﻿@page "{id:int}"
+@model Coffee.WebSite.Pages.Customer.UpdateModel
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Editar Cliente</h2>
+        <a asp-page="./List" class="btn btn-secondary">Volver</a>
+    </div>
+    <div class="card shadow-sm" style="max-width: 600px;">
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" name="CustomerDto.Id" value="@Model.CustomerDto.Id" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre</label>
+                    <input type="text" name="CustomerDto.Name" value="@Model.CustomerDto.Name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input type="email" name="CustomerDto.Email" value="@Model.CustomerDto.Email" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Puntos de Lealtad</label>
+                    <input type="number" name="CustomerDto.LoyaltyPoints" value="@Model.CustomerDto.LoyaltyPoints" class="form-control" min="0" />
+                </div>
+                <button type="submit" class="btn btn-warning">Actualizar</button>
+            </form>
+        </div>
+    </div>
+</div>

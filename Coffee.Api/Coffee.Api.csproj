@@ -22,8 +22,4 @@
       <ProjectReference Include="..\Coffee.Core\Coffee.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Data\" />
-    </ItemGroup>
-
 </Project>

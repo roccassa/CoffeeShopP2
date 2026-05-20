@@ -1,7 +1,16 @@
-﻿namespace Coffee.Core.Dto;
+﻿using Coffee.Core.Entities;
 
-public class RoleDto
+namespace Coffee.Core.Dto;
+
+public class RoleDto : DtoBase
 {
-    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+
+    public RoleDto() { }
+
+    public RoleDto(Role role)
+    {
+        Id = role.Id;
+        Name = role.Name;
+    }
 }

@@ -5,11 +5,11 @@ namespace Coffee.Api.Repositories.Interfaces;
 public interface ICategoryRepository
 {
     // Método para guardar la categoría
-    Task<bool> SaveAsync(Category category);
-
+    Task<Category> SaveAsync(Category category);
+    
     // Método para actualizar la categoría
-    Task<bool> UpdateAsync(Category category);
-
+    Task<Category> UpdateAsync(Category category);
+    
     // Método para retornar una lista
     Task<IEnumerable<Category>> GetAllAsync();
 
