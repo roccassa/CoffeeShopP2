@@ -17,7 +17,6 @@ public class CategoryRepository :ICategoryRepository
 
     public async Task<IEnumerable<Category>> GetAllAsync()
     {
-        // Usamos alias (AS) para que Dapper mapee 'nombre' a la propiedad 'Name' de tu entidad
         var sql = "SELECT id as Id, nombre as Name, descripcion as Description FROM Categorias";
         return await _context.Connection.QueryAsync<Category>(sql);
     }
@@ -28,21 +27,25 @@ public class CategoryRepository :ICategoryRepository
         return await _context.Connection.QueryFirstOrDefaultAsync<Category>(sql, new { Id = id });
     }
 
-    public async Task<bool> SaveAsync(Category category)
+    public async Task<Category> SaveAsync(Category category)
     {
-        var sql = "INSERT INTO Categorias (nombre, descripcion) VALUES (@Name, @Description)";
-        var result = await _context.Connection.ExecuteAsync(sql, new { 
+        // Inserta en tus columnas en minúscula y recupera el AUTO_INCREMENT usando LAST_INSERT_ID()
+        var sql = @"INSERT INTO Categorias (nombre, descripcion) VALUES (@Name, @Description);
+                    SELECT LAST_INSERT_ID();"; 
+        
+        category.Id = await _context.Connection.QuerySingleAsync<int>(sql, new { 
             Name = category.Name, 
             Description = category.Description 
         });
-        return result > 0;
+        
+        return category;
     }
 
-    public async Task<bool> UpdateAsync(Category category)
+    public async Task<Category> UpdateAsync(Category category)
     {
         var sql = "UPDATE Categorias SET nombre = @Name, descripcion = @Description WHERE id = @Id";
-        var result = await _context.Connection.ExecuteAsync(sql, category);
-        return result > 0;
+        await _context.Connection.ExecuteAsync(sql, category);
+        return category;
     }
 
     public async Task<bool> DeleteAsync(int id)
@@ -51,5 +54,4 @@ public class CategoryRepository :ICategoryRepository
         var result = await _context.Connection.ExecuteAsync(sql, new { Id = id });
         return result > 0;
     }
-    
 }

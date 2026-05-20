@@ -64,3 +64,4 @@ C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\
 C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\BCrypt.Net-Next.dll
+C:\Users\Antonio\Documents\ITSPR\E3\Tecnologias web\Tecnologias_P2\CoffeeShopP2\Coffee\Coffee.Api\bin\Debug\net10.0\Newtonsoft.Json.dll

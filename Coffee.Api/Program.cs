@@ -8,6 +8,16 @@ using Coffee.Api.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 // REGISTRO DE SERVICIOS
 builder.Services.AddControllers(); //sin esto no sirven los controladores 
 builder.Services.AddOpenApi();
@@ -34,8 +44,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowAll");
+    app.UseHttpsRedirection();
 }
-
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -34,16 +34,29 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Category category)
     {
-        var result = await _categoryRepository.SaveAsync(category);
-        if (result) return Ok("Category created successfully");
+        // Guardamos la entidad devuelta por el repositorio
+        var createdCategory = await _categoryRepository.SaveAsync(category);
+        
+        // Evaluamos si el objeto no es nulo en lugar de buscar un bool
+        if (createdCategory != null) 
+        {
+            // Siguiendo las buenas prácticas REST, devolvemos el objeto creado
+            return Ok(createdCategory);
+        }
         return BadRequest("Error creating category");
     }
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] Category category)
     {
-        var result = await _categoryRepository.UpdateAsync(category);
-        if (result) return Ok("Category updated successfully");
+        // Guardamos la entidad devuelta por el repositorio
+        var updatedCategory = await _categoryRepository.UpdateAsync(category);
+        
+        // Evaluamos si el objeto no es nulo
+        if (updatedCategory != null) 
+        {
+            return Ok(updatedCategory);
+        }
         return BadRequest("Error updating category");
     }
 
