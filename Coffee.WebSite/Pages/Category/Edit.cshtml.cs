@@ -7,13 +7,13 @@ namespace Coffee.WebSite.Pages.Category;
 
 public class EditModel : PageModel
 {
-    private readonly ICategoryServices _service;
+    private readonly ICategoryService _service;
 
     [BindProperty]
     public CategoryDto Category { get; set; } = new();
     public string ErrorMessage { get; set; } = string.Empty;
 
-    public EditModel(ICategoryServices service)
+    public EditModel(ICategoryService service)
     {
         _service = service;
     }
@@ -22,9 +22,9 @@ public class EditModel : PageModel
     {
         if (id.HasValue && id.Value > 0)
         {
-            var response = await _service.GetByIdAsync(id.Value);
-            if (response?.Data == null) return NotFound();
-            Category = response.Data;
+            var category = await _service.GetByIdAsync(id.Value);
+            if (category == null) return NotFound();
+            Category = category;
         }
         return Page();
     }
@@ -35,8 +35,8 @@ public class EditModel : PageModel
 
         if (Category.Id == 0)
         {
-            var response = await _service.SaveAsync(Category);
-            if (response?.Data == null)
+            var result = await _service.CreateAsync(Category);
+            if (result == null)
             {
                 ErrorMessage = "Error creating the category. Please try again.";
                 return Page();
@@ -44,8 +44,8 @@ public class EditModel : PageModel
         }
         else
         {
-            var response = await _service.UpdateAsync(Category);
-            if (response?.Data == null)
+            var result = await _service.UpdateAsync(Category);
+            if (result == null)
             {
                 ErrorMessage = "Error updating the category. Please try again.";
                 return Page();

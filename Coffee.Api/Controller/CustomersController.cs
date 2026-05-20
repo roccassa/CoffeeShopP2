@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Coffee.Api.Repositories.Interfaces;
-using Coffee.Core.Entities;
+using Coffee.Core.Dto;
+using Coffee.Core.Http;
 
 namespace Coffee.Api.Controller;
 
@@ -8,46 +9,109 @@ namespace Coffee.Api.Controller;
 [Route("api/[controller]")]
 public class CustomersController : ControllerBase
 {
-    private readonly ICustomerRepository _customerRepository;
+    private readonly ICustomerRepository _repository;
 
-    public CustomersController(ICustomerRepository customerRepository) => _customerRepository = customerRepository;
+    public CustomersController(ICustomerRepository repository)
+    {
+        _repository = repository;
+    }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _customerRepository.GetAllAsync());
-    
-    
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<ActionResult<Response<List<CustomerDto>>>> GetAll()
     {
-        var customer = await _customerRepository.GetByIdAsync(id);
-        if (customer == null) return NotFound();
-        return Ok(customer);
+        var customers = await _repository.GetAllAsync();
+        var response = new Response<List<CustomerDto>>
+        {
+            Data = customers.Select(c => new CustomerDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                LoyaltyPoints = c.LoyaltyPoints
+            }).ToList()
+        };
+        return Ok(response);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Response<CustomerDto>>> GetById(int id)
+    {
+        var response = new Response<CustomerDto>();
+        var customer = await _repository.GetByIdAsync(id);
+        if (customer == null)
+        {
+            response.Errors.Add("Customer not found");
+            return NotFound(response);
+        }
+        response.Data = new CustomerDto
+        {
+            Id = customer.Id,
+            Name = customer.Name,
+            Email = customer.Email,
+            LoyaltyPoints = customer.LoyaltyPoints
+        };
+        return Ok(response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Customer customer)
+    public async Task<ActionResult<Response<CustomerDto>>> Create([FromBody] CustomerDto dto)
     {
-        if (string.IsNullOrWhiteSpace(customer.Email)) return BadRequest("Email is mandatory.");
-        
-        try {
-            var result = await _customerRepository.SaveAsync(customer);
-            return result ? Ok("Registered customer\n") : BadRequest("Error registering");
+        var response = new Response<CustomerDto>();
+        var customer = new Coffee.Core.Entities.Customer
+        {
+            Name = dto.Name,
+            Email = dto.Email,
+            LoyaltyPoints = dto.LoyaltyPoints
+        };
+        var result = await _repository.SaveAsync(customer);
+        if (!result)
+        {
+            response.Errors.Add("Error creating customer");
+            return BadRequest(response);
         }
-        catch (Exception ex) {
-            if (ex.Message.Contains("Duplicate entry")) return BadRequest("This email is already registered.");
-            return StatusCode(500, "Server error.");
-        }
+        response.Data = dto;
+        return Ok(response);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] Customer customer)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<Response<CustomerDto>>> Update(int id, [FromBody] CustomerDto dto)
     {
-        if (customer.Id <= 0) return BadRequest("ID invalid");
-        var result = await _customerRepository.UpdateAsync(customer);
-        return result ? Ok("Updated customer") : BadRequest("Could not update");
+        var response = new Response<CustomerDto>();
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+        {
+            response.Errors.Add("Customer not found");
+            return NotFound(response);
+        }
+        var customer = new Coffee.Core.Entities.Customer
+        {
+            Id = id,
+            Name = dto.Name,
+            Email = dto.Email,
+            LoyaltyPoints = dto.LoyaltyPoints
+        };
+        var result = await _repository.UpdateAsync(customer);
+        if (!result)
+        {
+            response.Errors.Add("Error updating customer");
+            return BadRequest(response);
+        }
+        dto.Id = id;
+        response.Data = dto;
+        return Ok(response);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id) => 
-        await _customerRepository.DeleteAsync(id) ? Ok("Customer deleted") : NotFound();
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<Response<bool>>> Delete(int id)
+    {
+        var response = new Response<bool>();
+        var result = await _repository.DeleteAsync(id);
+        if (!result)
+        {
+            response.Errors.Add("Error deleting customer");
+            return BadRequest(response);
+        }
+        response.Data = true;
+        return Ok(response);
+    }
 }

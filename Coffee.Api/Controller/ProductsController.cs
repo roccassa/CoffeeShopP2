@@ -1,52 +1,121 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Coffee.Api.Repositories.Interfaces;
-using Coffee.Core.Entities;
+using Coffee.Core.Dto;
+using Coffee.Core.Http;
 
-namespace Coffee.Api.Controllers;
+namespace Coffee.Api.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRepository _repository;
 
-    public ProductsController(IProductRepository productRepository)
+    public ProductsController(IProductRepository repository)
     {
-        _productRepository = productRepository;
+        _repository = repository;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _productRepository.GetAllAsync());
+    public async Task<ActionResult<Response<List<ProductDto>>>> GetAll()
+    {
+        var products = await _repository.GetAllAsync();
+        var response = new Response<List<ProductDto>>
+        {
+            Data = products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                CategoryId = p.CategoryId,
+                Name = p.Name,
+                Description = p.Description,
+                IsActive = p.IsActive
+            }).ToList()
+        };
+        return Ok(response);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Response<ProductDto>>> GetById(int id)
+    {
+        var response = new Response<ProductDto>();
+        var product = await _repository.GetByIdAsync(id);
+        if (product == null)
+        {
+            response.Errors.Add("Product not found");
+            return NotFound(response);
+        }
+        response.Data = new ProductDto
+        {
+            Id = product.Id,
+            CategoryId = product.CategoryId,
+            Name = product.Name,
+            Description = product.Description,
+            IsActive = product.IsActive
+        };
+        return Ok(response);
+    }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Product product)
+    public async Task<ActionResult<Response<ProductDto>>> Create([FromBody] ProductDto dto)
     {
-        if (string.IsNullOrEmpty(product.Name)) return BadRequest("The name is required");
-        var result = await _productRepository.SaveAsync(product);
-        return result ? Ok("Product created") : BadRequest("Error creating");
-    }
-    
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var product = await _productRepository.GetByIdAsync(id);
-        if (product == null) return NotFound();
-        return Ok(product);
-    }
-    
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] Product product)
-    {
-        var result = await _productRepository.UpdateAsync(product);
-        if (result) return Ok("Product updated successfully");
-        return BadRequest("Error updating product");
+        var response = new Response<ProductDto>();
+        var product = new Coffee.Core.Entities.Product
+        {
+            CategoryId = dto.CategoryId,
+            Name = dto.Name,
+            Description = dto.Description,
+            IsActive = dto.IsActive
+        };
+        var result = await _repository.SaveAsync(product);
+        if (!result)
+        {
+            response.Errors.Add("Error creating product");
+            return BadRequest(response);
+        }
+        response.Data = dto;
+        return Ok(response);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<Response<ProductDto>>> Update(int id, [FromBody] ProductDto dto)
     {
-        var result = await _productRepository.DeleteAsync(id);
-        if (result) return Ok("Product deleted");
-        return BadRequest("Error deleting product");
+        var response = new Response<ProductDto>();
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+        {
+            response.Errors.Add("Product not found");
+            return NotFound(response);
+        }
+        var product = new Coffee.Core.Entities.Product
+        {
+            Id = id,
+            CategoryId = dto.CategoryId,
+            Name = dto.Name,
+            Description = dto.Description,
+            IsActive = dto.IsActive
+        };
+        var result = await _repository.UpdateAsync(product);
+        if (!result)
+        {
+            response.Errors.Add("Error updating product");
+            return BadRequest(response);
+        }
+        dto.Id = id;
+        response.Data = dto;
+        return Ok(response);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<Response<bool>>> Delete(int id)
+    {
+        var response = new Response<bool>();
+        var result = await _repository.DeleteAsync(id);
+        if (!result)
+        {
+            response.Errors.Add("Error deleting product");
+            return BadRequest(response);
+        }
+        response.Data = true;
+        return Ok(response);
     }
 }

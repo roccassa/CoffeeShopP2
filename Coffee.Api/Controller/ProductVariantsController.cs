@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Coffee.Api.Repositories.Interfaces;
-using Coffee.Core.Entities;
+using Coffee.Core.Dto;
+using Coffee.Core.Http;
 
 namespace Coffee.Api.Controller;
 
@@ -8,45 +9,109 @@ namespace Coffee.Api.Controller;
 [Route("api/[controller]")]
 public class ProductVariantsController : ControllerBase
 {
-    private readonly IProductVariantRepository _repoVariants;
-    public ProductVariantsController(IProductVariantRepository repo) => _repoVariants = repo;
+    private readonly IProductVariantRepository _repository;
+
+    public ProductVariantsController(IProductVariantRepository repository)
+    {
+        _repository = repository;
+    }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _repoVariants.GetAllAsync());
-    
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<ActionResult<Response<List<ProductVariantDto>>>> GetAll()
     {
-        var variant = await _repoVariants.GetByIdAsync(id);
-        if (variant == null) return NotFound();
-        return Ok(variant);
+        var variants = await _repository.GetAllAsync();
+        var response = new Response<List<ProductVariantDto>>
+        {
+            Data = variants.Select(v => new ProductVariantDto
+            {
+                Id = v.Id,
+                ProductId = v.ProductId,
+                Size = v.Size,
+                Price = v.Price
+            }).ToList()
+        };
+        return Ok(response);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Response<ProductVariantDto>>> GetById(int id)
+    {
+        var response = new Response<ProductVariantDto>();
+        var variant = await _repository.GetByIdAsync(id);
+        if (variant == null)
+        {
+            response.Errors.Add("Product variant not found");
+            return NotFound(response);
+        }
+        response.Data = new ProductVariantDto
+        {
+            Id = variant.Id,
+            ProductId = variant.ProductId,
+            Size = variant.Size,
+            Price = variant.Price
+        };
+        return Ok(response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] ProductVariant variant)
+    public async Task<ActionResult<Response<ProductVariantDto>>> Create([FromBody] ProductVariantDto dto)
     {
-        if (variant.Price <= 0) return BadRequest("The price must be greater than 0.");
-        if (string.IsNullOrWhiteSpace(variant.Size)) return BadRequest("Size is required.");
-        if (variant.ProductId <= 0) return BadRequest("You must associate a valid Product.");
-
-        try {
-            return await _repoVariants.SaveAsync(variant) ? Ok("Presentation created") : BadRequest("Error creating");
+        var response = new Response<ProductVariantDto>();
+        var variant = new Coffee.Core.Entities.ProductVariant
+        {
+            ProductId = dto.ProductId,
+            Size = dto.Size,
+            Price = dto.Price
+        };
+        var result = await _repository.SaveAsync(variant);
+        if (!result)
+        {
+            response.Errors.Add("Error creating product variant");
+            return BadRequest(response);
         }
-        catch (Exception ex) {
-            if (ex.Message.Contains("foreign key constraint fails")) 
-                return BadRequest("The product ID does not exist.");
-            return StatusCode(500, "Server Error.");
-        }
+        response.Data = dto;
+        return Ok(response);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] ProductVariant variant)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<Response<ProductVariantDto>>> Update(int id, [FromBody] ProductVariantDto dto)
     {
-        if (variant.Id <= 0) return BadRequest("ID invalid.");
-        return await _repoVariants.UpdateAsync(variant) ? Ok("Updated") : BadRequest("Could not update");
+        var response = new Response<ProductVariantDto>();
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+        {
+            response.Errors.Add("Product variant not found");
+            return NotFound(response);
+        }
+        var variant = new Coffee.Core.Entities.ProductVariant
+        {
+            Id = id,
+            ProductId = dto.ProductId,
+            Size = dto.Size,
+            Price = dto.Price
+        };
+        var result = await _repository.UpdateAsync(variant);
+        if (!result)
+        {
+            response.Errors.Add("Error updating product variant");
+            return BadRequest(response);
+        }
+        dto.Id = id;
+        response.Data = dto;
+        return Ok(response);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id) => 
-        await _repoVariants.DeleteAsync(id) ? Ok("Deleted") : NotFound();
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<Response<bool>>> Delete(int id)
+    {
+        var response = new Response<bool>();
+        var result = await _repository.DeleteAsync(id);
+        if (!result)
+        {
+            response.Errors.Add("Error deleting product variant");
+            return BadRequest(response);
+        }
+        response.Data = true;
+        return Ok(response);
+    }
 }

@@ -1,7 +1,8 @@
-﻿using System.Text;
-using Newtonsoft.Json;
-using Coffee.Core.Dto;
+﻿using Coffee.Core.Dto;
+using Coffee.Core.Http;
 using Coffee.WebSite.Services.Interfaces;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Coffee.WebSite.Services;
 
@@ -9,48 +10,49 @@ public class CustomerService : ICustomerService
 {
     private readonly HttpClient _client;
     private readonly string _baseUrl = "http://localhost:5140/";
-    private readonly string _endpoint = "api/Customers";
+    private readonly string _endpoint = "api/customers";
 
-    public CustomerService(HttpClient client) => _client = client;
+    public CustomerService(HttpClient client)
+    {
+        _client = client;
+    }
 
-    public async Task<List<CustomerDto>> GetAllAsync()
+    public async Task<Response<List<CustomerDto>>> GetAllAsync()
     {
         var res = await _client.GetAsync($"{_baseUrl}{_endpoint}");
         var json = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<List<CustomerDto>>(json) ?? new List<CustomerDto>();
+        return JsonConvert.DeserializeObject<Response<List<CustomerDto>>>(json)!;
     }
 
-    public async Task<CustomerDto> GetByIdAsync(int id)
+    public async Task<Response<CustomerDto>> GetByIdAsync(int id)
     {
         var res = await _client.GetAsync($"{_baseUrl}{_endpoint}/{id}");
         var json = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<CustomerDto>(json)!;
+        return JsonConvert.DeserializeObject<Response<CustomerDto>>(json)!;
     }
 
-    public async Task<CustomerDto> CreateAsync(CustomerDto customerDto)
+    public async Task<Response<CustomerDto>> CreateAsync(CustomerDto dto)
     {
-        var content = new StringContent(JsonConvert.SerializeObject(customerDto), Encoding.UTF8, "application/json");
+        var json = JsonConvert.SerializeObject(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
         var res = await _client.PostAsync($"{_baseUrl}{_endpoint}", content);
-        if (!res.IsSuccessStatusCode)
-        {
-            var error = await res.Content.ReadAsStringAsync();
-            throw new Exception(error);
-        }
-        return customerDto;
+        var jsonResponse = await res.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Response<CustomerDto>>(jsonResponse)!;
     }
 
-    public async Task<CustomerDto> UpdateAsync(CustomerDto customerDto)
+    public async Task<Response<CustomerDto>> UpdateAsync(CustomerDto dto)
     {
-        var content = new StringContent(JsonConvert.SerializeObject(customerDto), Encoding.UTF8, "application/json");
-        var res = await _client.PutAsync($"{_baseUrl}{_endpoint}", content);
-        if (!res.IsSuccessStatusCode)
-            throw new Exception("Error al actualizar el cliente");
-        return customerDto;
+        var json = JsonConvert.SerializeObject(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var res = await _client.PutAsync($"{_baseUrl}{_endpoint}/{dto.Id}", content);
+        var jsonResponse = await res.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Response<CustomerDto>>(jsonResponse)!;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<Response<bool>> DeleteAsync(int id)
     {
         var res = await _client.DeleteAsync($"{_baseUrl}{_endpoint}/{id}");
-        return res.IsSuccessStatusCode;
+        var jsonResponse = await res.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Response<bool>>(jsonResponse)!;
     }
 }

@@ -1,7 +1,8 @@
-﻿using System.Text;
-using Newtonsoft.Json;
-using Coffee.Core.Dto;
+﻿using Coffee.Core.Dto;
+using Coffee.Core.Http;
 using Coffee.WebSite.Services.Interfaces;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Coffee.WebSite.Services;
 
@@ -9,49 +10,49 @@ public class RoleService : IRoleService
 {
     private readonly HttpClient _client;
     private readonly string _baseUrl = "http://localhost:5140/";
-    private readonly string _endpoint = "api/Roles";
+    private readonly string _endpoint = "api/roles";
 
     public RoleService(HttpClient client)
     {
         _client = client;
     }
 
-    public async Task<List<RoleDto>> GetAllAsync()
+    public async Task<Response<List<RoleDto>>> GetAllAsync()
     {
         var res = await _client.GetAsync($"{_baseUrl}{_endpoint}");
         var json = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<List<RoleDto>>(json) ?? new List<RoleDto>();
+        return JsonConvert.DeserializeObject<Response<List<RoleDto>>>(json)!;
     }
 
-    public async Task<RoleDto> GetByIdAsync(int id)
+    public async Task<Response<RoleDto>> GetByIdAsync(int id)
     {
         var res = await _client.GetAsync($"{_baseUrl}{_endpoint}/{id}");
         var json = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<RoleDto>(json)!;
+        return JsonConvert.DeserializeObject<Response<RoleDto>>(json)!;
     }
 
-    public async Task<RoleDto> CreateAsync(RoleDto roleDto)
+    public async Task<Response<RoleDto>> CreateAsync(RoleDto dto)
     {
-        var content = new StringContent(JsonConvert.SerializeObject(roleDto), Encoding.UTF8, "application/json");
+        var json = JsonConvert.SerializeObject(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
         var res = await _client.PostAsync($"{_baseUrl}{_endpoint}", content);
-        // La API devuelve un string, no un objeto, así que solo verificamos éxito
-        if (!res.IsSuccessStatusCode)
-            throw new Exception("Error al crear el rol");
-        return roleDto;
+        var jsonResponse = await res.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Response<RoleDto>>(jsonResponse)!;
     }
 
-    public async Task<RoleDto> UpdateAsync(RoleDto roleDto)
+    public async Task<Response<RoleDto>> UpdateAsync(RoleDto dto)
     {
-        var content = new StringContent(JsonConvert.SerializeObject(roleDto), Encoding.UTF8, "application/json");
-        var res = await _client.PutAsync($"{_baseUrl}{_endpoint}", content);
-        if (!res.IsSuccessStatusCode)
-            throw new Exception("Error al actualizar el rol");
-        return roleDto;
+        var json = JsonConvert.SerializeObject(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var res = await _client.PutAsync($"{_baseUrl}{_endpoint}/{dto.Id}", content);
+        var jsonResponse = await res.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Response<RoleDto>>(jsonResponse)!;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<Response<bool>> DeleteAsync(int id)
     {
         var res = await _client.DeleteAsync($"{_baseUrl}{_endpoint}/{id}");
-        return res.IsSuccessStatusCode;
+        var jsonResponse = await res.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Response<bool>>(jsonResponse)!;
     }
 }

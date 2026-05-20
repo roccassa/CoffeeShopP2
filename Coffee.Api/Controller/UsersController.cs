@@ -1,80 +1,121 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Coffee.Api.Repositories.Interfaces;
-using Coffee.Core.Entities;
+using Coffee.Core.Dto;
+using Coffee.Core.Http;
 
-namespace Coffee.Api.Controllers;
+namespace Coffee.Api.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserRepository _repository;
 
-    public UsersController(IUserRepository userRepository)
+    public UsersController(IUserRepository repository)
     {
-        _userRepository = userRepository;
+        _repository = repository;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _userRepository.GetAllAsync());
+    public async Task<ActionResult<Response<List<UserDto>>>> GetAll()
+    {
+        var users = await _repository.GetAllAsync();
+        var response = new Response<List<UserDto>>
+        {
+            Data = users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                RoleId = u.RoleId,
+                Username = u.Username,
+                PasswordHash = u.PasswordHash,
+                FullName = u.FullName
+            }).ToList()
+        };
+        return Ok(response);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Response<UserDto>>> GetById(int id)
+    {
+        var response = new Response<UserDto>();
+        var user = await _repository.GetByIdAsync(id);
+        if (user == null)
+        {
+            response.Errors.Add("User not found");
+            return NotFound(response);
+        }
+        response.Data = new UserDto
+        {
+            Id = user.Id,
+            RoleId = user.RoleId,
+            Username = user.Username,
+            PasswordHash = user.PasswordHash,
+            FullName = user.FullName
+        };
+        return Ok(response);
+    }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] User user)
+    public async Task<ActionResult<Response<UserDto>>> Create([FromBody] UserDto dto)
     {
-        // Validación rigurosa de campos
-        if (string.IsNullOrWhiteSpace(user.Username)) return BadRequest("A username is required.");
-        if (string.IsNullOrWhiteSpace(user.PasswordHash)) return BadRequest("Password is required.");
-        if (user.RoleId <= 0) return BadRequest("You must assign a valid role.");
-
-        try 
+        var response = new Response<UserDto>();
+        var user = new Coffee.Core.Entities.User
         {
-            var result = await _userRepository.SaveAsync(user);
-            return result ? Ok("User created successfully.") : BadRequest("The user could not be created..");
-        }
-        catch (Exception ex)
+            RoleId = dto.RoleId,
+            Username = dto.Username,
+            PasswordHash = dto.PasswordHash,
+            FullName = dto.FullName
+        };
+        var result = await _repository.SaveAsync(user);
+        if (!result)
         {
-            if (ex.Message.Contains("Duplicate entry"))
-                return BadRequest("The username already exists.");
-            
-            if (ex.Message.Contains("foreign key constraint fails"))
-                return BadRequest("The provided Role ID does not exist.");
-
-            return StatusCode(500, "Internal Server Error.");
+            response.Errors.Add("Error creating user");
+            return BadRequest(response);
         }
+        response.Data = dto;
+        return Ok(response);
     }
 
-    // Endpoint adicional para el login (Control y Validación)
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(string username, string password)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<Response<UserDto>>> Update(int id, [FromBody] UserDto dto)
     {
-        var user = await _userRepository.GetByUsernameAsync(username);
-        
-        if (user == null || user.PasswordHash != password) // En un proyecto real usarías hashing
-            return Unauthorized("Incorrect username or password.");
-
-        return Ok(new { Message = $"Welcome {user.FullName}", Rol = user.RoleId });
+        var response = new Response<UserDto>();
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+        {
+            response.Errors.Add("User not found");
+            return NotFound(response);
+        }
+        var user = new Coffee.Core.Entities.User
+        {
+            Id = id,
+            RoleId = dto.RoleId,
+            Username = dto.Username,
+            PasswordHash = dto.PasswordHash,
+            FullName = dto.FullName
+        };
+        var result = await _repository.UpdateAsync(user);
+        if (!result)
+        {
+            response.Errors.Add("Error updating user");
+            return BadRequest(response);
+        }
+        dto.Id = id;
+        response.Data = dto;
+        return Ok(response);
     }
-    
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var user = await _userRepository.GetByIdAsync(id);
-        if (user == null) return NotFound("User not found");
-        return Ok(user);
-    }
 
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] User user)
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<Response<bool>>> Delete(int id)
     {
-        if (user.Id <= 0) return BadRequest("Invalid user ID");
-        var result = await _userRepository.UpdateAsync(user);
-        return result ? Ok("User updated") : BadRequest("Could not update");
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var result = await _userRepository.DeleteAsync(id);
-        return result ? Ok("User deleted") : NotFound("The user does not exist");
+        var response = new Response<bool>();
+        var result = await _repository.DeleteAsync(id);
+        if (!result)
+        {
+            response.Errors.Add("Error deleting user");
+            return BadRequest(response);
+        }
+        response.Data = true;
+        return Ok(response);
     }
 }
