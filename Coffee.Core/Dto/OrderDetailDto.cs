@@ -7,4 +7,6 @@ public class OrderDetailDto
     public int ProductVariantId { get; set; }
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
+    
+    public string? PresentationName { get; set; }
 }

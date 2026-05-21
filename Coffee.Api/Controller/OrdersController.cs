@@ -29,7 +29,10 @@ public class OrdersController : ControllerBase
                 CustomerId = o.CustomerId,
                 PaymentMethodId = o.PaymentMethodId,
                 Total = o.Total,
-                Status = o.Status
+                Status = o.Status,
+                UserName = o.UserName,
+                CustomerName = o.CustomerName,
+                PaymentMethodName = o.PaymentMethodName,
             }).ToList()
         };
         return Ok(response);

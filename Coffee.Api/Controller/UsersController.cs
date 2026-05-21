@@ -25,7 +25,7 @@ public class UsersController : ControllerBase
             Data = users.Select(u => new UserDto
             {
                 Id = u.Id,
-                RoleId = u.RoleId,
+                RoleName = u.RoleName,
                 Username = u.Username,
                 PasswordHash = u.PasswordHash,
                 FullName = u.FullName

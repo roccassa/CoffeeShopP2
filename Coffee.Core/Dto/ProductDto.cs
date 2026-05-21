@@ -1,4 +1,6 @@
-﻿namespace Coffee.Core.Dto;
+﻿using Coffee.Core.Entities;
+
+namespace Coffee.Core.Dto;
 
 public class ProductDto
 {
@@ -8,5 +10,6 @@ public class ProductDto
     public int CategoryId { get; set; }
     public bool IsActive { get; set; }
     
-  
+    public string? CategoryName { get; set; }
+    
 }

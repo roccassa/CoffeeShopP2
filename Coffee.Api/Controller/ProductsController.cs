@@ -27,6 +27,7 @@ public class ProductsController : ControllerBase
                 Id = p.Id,
                 CategoryId = p.CategoryId,
                 Name = p.Name,
+                CategoryName = p.CategoryName,
                 Description = p.Description,
                 IsActive = p.IsActive
             }).ToList()

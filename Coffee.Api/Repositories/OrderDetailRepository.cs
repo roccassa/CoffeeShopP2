@@ -9,11 +9,6 @@ public class OrderDetailRepository : IOrderDetailRepository {
     private readonly IDbContext _context;
     public OrderDetailRepository(IDbContext context) => _context = context;
 
-    public async Task<IEnumerable<OrderDetail>> GetByOrderIdAsync(int orderId) {
-        var sql = "SELECT id as Id, orden_id as OrderId, presentacion_id as ProductVariantId, cantidad as Quantity, precio_unitario as UnitPrice FROM DetalleOrden WHERE orden_id = @OrderId";
-        return await _context.Connection.QueryAsync<OrderDetail>(sql, new { OrderId = orderId });
-    }
-
     public async Task<bool> SaveAsync(OrderDetail detail) {
         var sql = "INSERT INTO DetalleOrden (orden_id, presentacion_id, cantidad, precio_unitario) VALUES (@OrderId, @ProductVariantId, @Quantity, @UnitPrice)";
         var result = await _context.Connection.ExecuteAsync(sql, detail);
@@ -21,7 +16,22 @@ public class OrderDetailRepository : IOrderDetailRepository {
     }
     
     public async Task<IEnumerable<OrderDetail>> GetAllAsync() {
-        var sql = "SELECT id as Id, orden_id as OrderId, presentacion_id as ProductVariantId, cantidad as Quantity, precio_unitario as UnitPrice FROM DetalleOrden";
+        var sql = @"
+        SELECT
+            d.id as Id,
+            d.orden_id as OrderId,
+            d.presentacion_id as ProductVariantId,
+            d.cantidad as Quantity,
+            d.precio_unitario as UnitPrice,
+
+            p.tamano as PresentationName
+
+        FROM detalleorden d
+
+        INNER JOIN presentaciones p
+            ON d.presentacion_id = p.id
+    ";
+
         return await _context.Connection.QueryAsync<OrderDetail>(sql);
     }
 

@@ -1,198 +1,245 @@
 @page
+@using System.Text.Encodings.Web
 @model Coffee.WebSite.Pages.Order.CreateModel
 @{
-    ViewData["Title"] = "Agregar Orden";
+ViewData["Title"] = "Punto de Venta POS";
 }
 
 @section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important;
-        }
+<style>
+    body { background-color: #f8f1e9 !important; }
+    .pos-container { background-color: #fdfbf7; min-height: 90vh; border-radius: 16px; box-shadow: 0 10px 30px rgba(44, 29, 17, 0.05); }
+    .product-grid { height: 65vh; overflow-y: auto; padding-right: 5px; }
+    .product-card { background: white; border: 1px solid #e9e4dc; border-radius: 12px; transition: all 0.2s ease; cursor: pointer; }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(111, 78, 55, 0.15); border-color: #6f4e37; }
+    .brand-pill { background-color: #6f4e37; color: white; font-weight: 600; }
+    .ticket-panel { background: #ffffff; border-left: 2px solid #e9e4dc; height: 80vh; display: flex; flex-direction: column; }
+    .ticket-items { flex-grow: 1; overflow-y: auto; }
 
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 4rem;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2.5rem;
-        }
-
-        .card-custom {
-            border: none;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.06);
-            padding: 2.5rem;
-        }
-
-        .form-label {
-            color: #2c1d11;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .input-group-text {
-            background-color: #fdfbf7;
-            border-color: #e9e4dc;
-            color: #6f4e37;
-        }
-
-        .form-control, .form-select {
-            border-color: #e9e4dc;
-            padding: 0.65rem 0.75rem;
-            background-color: #fdfbf7;
-            font-size: 0.95rem;
-            border-radius: 8px;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .btn-coffee-save {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            color: white;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-save:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-            color: white;
-        }
-
-        .btn-coffee-cancel {
-            background-color: transparent;
-            border: 1px solid #c8b195;
-            color: #6f4e37;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-cancel:hover {
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            border-color: #6f4e37;
-        }
-
-        .alert-custom {
-            background-color: #fdf2f2;
-            border: 1px solid #fbd5d5;
-            color: #9b1c1c;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-    </style>
+    @@media print {
+        body * { visibility: hidden; }
+        #printableTicket, #printableTicket * { visibility: visible; }
+        #printableTicket { position: absolute; left: 0; top: 0; width: 80mm; font-family: 'Courier New', monospace; font-size: 12px; }
+    }
+</style>
 }
 
-<div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Nueva Orden Administrativa</h1>
-            <p class="lead mb-0">Forza el registro o alta manual de un ticket comercial en el sistema</p>
-        </div>
+<div class="container-fluid my-3">
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @Model.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
+    }
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
-                
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    <div class="row pos-container g-0 overflow-hidden">
+
+        <div class="col-lg-8 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-0"><i class="bi bi-cup-hot-fill me-2 text-coffee"></i>Menú Digital POS</h2>
+                    <p class="text-muted small mb-0">Haz clic en cualquier presentación para agregarla a la comanda</p>
+                </div>
+                <span class="badge brand-pill px-3 py-2 fs-6">Cafetería Activa</span>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-3 product-grid">
+                @foreach (var variant in Model.VariantsList)
                 {
-                    <div class="alert alert-custom alert-dismissible fade show d-flex align-items-center mb-4 p-3" role="alert">
-                        <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
-                        <div>@Model.ErrorMessage</div>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
+                    // Usamos la propiedad ProductName que ya viene resuelta en tu DTO
+                    var nombreDisplay = !string.IsNullOrEmpty(variant.ProductName) 
+                        ? variant.ProductName 
+                        : "Bebida/Artículo";
 
-                <div class="card card-custom">
-                    <form method="post" autocomplete="off" novalidate>
-                        
-                        <div class="mb-3">
-                            <label asp-for="OrderDto.UserId" class="form-label">ID del Usuario (Cajero)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                <input asp-for="OrderDto.UserId" class="form-control" type="number" placeholder="Ingresa ID del empleado en caja" required min="1" autofocus />
+                    <div class="col">
+                        <div class="card product-card h-100 p-3 d-flex flex-column justify-content-between" 
+                             onclick="agregarAlCarrito(@variant.Id, '@JavaScriptEncoder.Default.Encode(nombreDisplay)', '@variant.Size', @variant.Price)">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-secondary-subtle text-dark border px-2 py-1 small">ID: #@variant.Id</span>
+                                    <span class="fw-bold text-success font-monospace">$@variant.Price.ToString("F2")</span>
+                                </div>
+                                <h5 class="card-title text-dark fw-bold mb-1">@nombreDisplay</h5>
+                                <p class="card-text text-muted small"><i class="bi bi-tags me-1"></i>Tamaño: <strong>@variant.Size</strong></p>
                             </div>
-                            <span asp-validation-for="OrderDto.UserId" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="OrderDto.CustomerId" class="form-label">ID del Cliente (Dejar vacío si es Público General)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                                <input asp-for="OrderDto.CustomerId" class="form-control" type="number" placeholder="Opcional: ID de cliente fidelizado" min="1" />
-                            </div>
-                            <span asp-validation-for="OrderDto.CustomerId" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="OrderDto.PaymentMethodId" class="form-label">ID del Método de Pago</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-credit-card-2-back-fill"></i></span>
-                                <input asp-for="OrderDto.PaymentMethodId" class="form-control" type="number" placeholder="Ingresa ID del método de cobro" required min="1" />
-                            </div>
-                            <span asp-validation-for="OrderDto.PaymentMethodId" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="OrderDto.Total" class="form-label">Monto Total de la Venta</label>
-                            <div class="input-group">
-                                <span class="input-group-text fw-bold">$</span>
-                                <input asp-for="OrderDto.Total" class="form-control" type="number" step="0.01" placeholder="0.00" required min="0" />
-                            </div>
-                            <span asp-validation-for="OrderDto.Total" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="OrderDto.Status" class="form-label">Estado Inicial de la Orden</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-arrow-left-right"></i></span>
-                                <select asp-for="OrderDto.Status" class="form-select">
-                                    <option value="Pendiente" selected>Pendiente</option>
-                                    <option value="Preparando">Preparando</option>
-                                    <option value="Entregado">Completado / Entregado</option> 
-                                    <option value="Cancelado">Cancelado</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="OrderDto.Status" class="text-danger small"></span>
-                        </div>
-
-                        <hr class="text-muted my-4" />
-
-                        <div class="d-flex justify-content-end gap-3">
-                            <a asp-page="./List" class="btn btn-coffee-cancel">
-                                <i class="bi bi-x-circle me-1"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-coffee-save">
-                                <i class="bi bi-check-circle me-1"></i> Crear Orden
+                            <button class="btn btn-sm btn-outline-primary mt-2 w-100">
+                                <i class="bi bi-plus-lg"></i> Agregar
                             </button>
                         </div>
-                    </form>
-                </div>
-
+                    </div>
+                }
             </div>
         </div>
+
+        <div class="col-lg-4 p-4 ticket-panel">
+            <h4 class="fw-bold text-dark pb-2 border-bottom"><i class="bi bi-receipt-cutoff me-2"></i>Nueva Comanda</h4>
+
+            <form method="post" id="posForm" class="d-flex flex-column h-100 justify-content-between mt-2">
+                <input type="hidden" asp-for="CartJson" id="cartJsonInput" />
+                <input type="hidden" asp-for="OrderDto.Total" id="totalInput" value="0" />
+
+                <div class="bg-light p-3 rounded-3 mb-3 border">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Atiende (Cajero)</label>
+                            <select asp-for="OrderDto.UserId" class="form-select form-select-sm" required>
+                                @foreach (var u in Model.UsersList) {
+                                // Si tu UserDto usa Name o UserName ajustalo aquí
+                                <option value="@u.Id">@(u.Username ?? u.FullName)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Método Pago</label>
+                            <select asp-for="OrderDto.PaymentMethodId" class="form-select form-select-sm" required>
+                                @foreach (var p in Model.PaymentsList) {
+                                <option value="@p.Id">@p.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label small fw-bold">Estado de la Orden</label>
+                        <select asp-for="OrderDto.Status" class="form-select form-select-sm" required>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Preparando">Preparando</option>
+                            <option value="Entregado">Entregado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-muted small uppercase tracking-wider mb-2">Conceptos Seleccionados</h6>
+                <div class="ticket-items border rounded p-2 bg-white mb-3" id="ticketContainer">
+                    <p class="text-center text-muted my-4 small" id="emptyCartMessage">El ticket está vacío.</p>
+                </div>
+
+                <div class="pt-2 border-top mb-3">
+                    <div class="d-flex justify-content-between font-monospace fs-5 fw-bold text-dark">
+                        <span>TOTAL:</span>
+                        <span id="txtTotal">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-outline-dark w-100" onclick="imprimirTicketLocal()">
+                            <i class="bi bi-file-pdf"></i> Imprimir PDF
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-success w-100 fw-bold">
+                            <i class="bi bi-check-circle"></i> Cobrar Orden
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<div id="printableTicket" class="d-none">
+    <div style="text-align: center; margin-bottom: 10px;">
+        <h3>☕ COFFEE SHOP POS ☕</h3>
+        <p>Ticket de Consumo Comercial</p>
+        <p>--------------------------------</p>
+    </div>
+    <div id="printItemsContainer"></div>
+    <p>--------------------------------</p>
+    <h4 style="text-align: right;" id="printTotal">TOTAL: $0.00</h4>
+    <div style="text-align: center; margin-top: 15px; font-size: 10px;">
+        <p>¡Gracias por tu preferencia!</p>
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+<script>
+    let carrito = [];
+
+    function agregarAlCarrito(variantId, nombre, size, precio) {
+        let itemExistente = carrito.find(x => x.variantId === variantId);
+        if (itemExistente) {
+            itemExistente.cantidad++;
+        } else {
+            carrito.push({ variantId: variantId, nombre: nombre, size: size, precio: precio, cantidad: 1 });
+        }
+        actualizarInterfazPOS();
+    }
+
+    function removerDelCarrito(variantId) {
+        carrito = carrito.filter(x => x.variantId !== variantId);
+        actualizarInterfazPOS();
+    }
+
+    function actualizarInterfazPOS() {
+        const container = document.getElementById('ticketContainer');
+        const emptyMsg = document.getElementById('emptyCartMessage');
+        const txtTotal = document.getElementById('txtTotal');
+        const inputTotal = document.getElementById('totalInput');
+        const inputJson = document.getElementById('cartJsonInput');
+
+        container.querySelectorAll('.cart-item-row').forEach(e => e.remove());
+
+        if (carrito.length === 0) {
+            emptyMsg.style.display = 'block';
+            txtTotal.innerText = "$0.00";
+            inputTotal.value = "0";
+            inputJson.value = "[]";
+            return;
+        }
+
+        emptyMsg.style.display = 'none';
+        let totalAcumulado = 0;
+
+        carrito.forEach(item => {
+            let subtotalItem = item.precio * item.cantidad;
+            totalAcumulado += subtotalItem;
+
+            let row = document.createElement('div');
+            row.className = 'cart-item-row d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom small';
+            row.innerHTML = `
+                    <div>
+                        <span class="fw-bold text-dark">${item.nombre}</span> <span class="text-muted">(${item.size})</span>
+                        <div class="text-muted font-monospace">${item.cantidad}x $${item.precio.toFixed(2)}</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold text-dark font-monospace">$${subtotalItem.toFixed(2)}</span>
+                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removerDelCarrito(${item.variantId})">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                `;
+            container.appendChild(row);
+        });
+
+        txtTotal.innerText = `$${totalAcumulado.toFixed(2)}`;
+        inputTotal.value = totalAcumulado.toFixed(2);
+        inputJson.value = JSON.stringify(carrito);
+    }
+
+    function imprimirTicketLocal() {
+        if (carrito.length === 0) {
+            alert("⚠️ El ticket está vacío.");
+            return;
+        }
+
+        const printContainer = document.getElementById('printItemsContainer');
+        printContainer.innerHTML = '';
+        let total = 0;
+
+        carrito.forEach(item => {
+            let sub = item.precio * item.cantidad;
+            total += sub;
+            let div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'space-between';
+            div.innerHTML = `<span>${item.cantidad}x ${item.nombre} (${item.size})</span> <span>$${sub.toFixed(2)}</span>`;
+            printContainer.appendChild(div);
+        });
+
+        document.getElementById('printTotal').innerText = `TOTAL: $${total.toFixed(2)}`;
+        window.print();
+    }
+</script>
 }

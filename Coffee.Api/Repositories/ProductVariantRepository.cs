@@ -12,7 +12,16 @@ public class ProductVariantRepository : IProductVariantRepository
 
     public async Task<IEnumerable<ProductVariant>> GetAllAsync()
     {
-        var sql = "SELECT id as Id, producto_id as ProductId, tamano as Size, precio as Price FROM Presentaciones";
+        var sql = @"
+        SELECT
+            p.id as Id,
+            p.producto_id as ProductId,
+            pr.nombre as ProductName,
+            p.tamano as Size,
+            p.precio as Price
+        FROM Presentaciones p
+        INNER JOIN Productos pr
+            ON p.producto_id = pr.id";
         return await _context.Connection.QueryAsync<ProductVariant>(sql);
     }
 

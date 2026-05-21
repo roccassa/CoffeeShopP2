@@ -12,8 +12,19 @@ public class UserRepository : IUserRepository
 
     public async Task<IEnumerable<User>> GetAllAsync()
     {
-        var sql = "SELECT id as Id, rol_id as RoleId, username as Username, password_hash as PasswordHash, nombre_completo as FullName FROM Usuarios";
+        var sql = @"
+        SELECT
+            u.id as Id,
+            u.username as Username,
+            u.nombre_completo as FullName,
+            u.rol_id as RoleId,
+            r.nombre as RoleName
+        FROM Usuarios u
+        INNER JOIN Roles r
+            ON u.rol_id = r.id";
+
         return await _context.Connection.QueryAsync<User>(sql);
+
     }
 
     public async Task<User?> GetByUsernameAsync(string username)

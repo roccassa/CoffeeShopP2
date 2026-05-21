@@ -8,74 +8,93 @@ namespace Coffee.WebSite.Pages.Order;
 public class CreateModel : PageModel
 {
     private readonly IOrderService _orderService;
-    private readonly IUserService _userService;         // Inyectamos servicio de usuarios
-    private readonly ICustomerService _customerService; // Inyect
-    private readonly IPaymentMethodService _paymentMethodService;
-    
+    private readonly IProductService _productService;
+    private readonly IProductVariantService _variantService;
+    private readonly IUserService _userService;
+    private readonly IPaymentMethodService _paymentService;
+
     [BindProperty]
     public OrderDto OrderDto { get; set; } = new();
 
+    public List<ProductDto> ProductsList { get; set; } = new();
+    public List<ProductVariantDto> VariantsList { get; set; } = new();
+    public List<UserDto> UsersList { get; set; } = new();
+    public List<PaymentMethodDto> PaymentsList { get; set; } = new();
+
+    [BindProperty]
+    public string CartJson { get; set; } = "[]";
+
     public string ErrorMessage { get; set; } = string.Empty;
 
-    public CreateModel(IOrderService orderService, IUserService userService, ICustomerService customerService, IPaymentMethodService paymentMethodService)
+    public CreateModel(
+        IOrderService orderService, 
+        IProductService productService, 
+        IProductVariantService variantService,
+        IUserService userService,
+        IPaymentMethodService paymentService)
     {
         _orderService = orderService;
+        _productService = productService;
+        _variantService = variantService;
         _userService = userService;
-        _customerService = customerService;
-        _paymentMethodService = paymentMethodService;
+        _paymentService = paymentService;
+    }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        await LoadCatalogosAsync();
+        // Ajustado a tu propiedad real en inglés
+        OrderDto.Status = "Pendiente"; 
+        return Page();
+    }
+
+    private async Task LoadCatalogosAsync()
+    {
+        // 1. Consumir las respuestas de la API
+        var pRes = await _productService.GetAllAsync();
+        ProductsList = pRes.Data ?? new();
+
+        var vRes = await _variantService.GetAllAsync();
+        var variantesOriginales = vRes.Data ?? new();
+
+        var uRes = await _userService.GetAllAsync();
+        UsersList = uRes.Data ?? new();
+
+        var payRes = await _paymentService.GetAllAsync();
+        PaymentsList = payRes.Data ?? new();
+
+        // 2. CORRECCIÓN CLAVE: Inyectar el nombre del producto directamente en la variante
+        // Si tu ProductVariantDto no tiene un campo para el nombre, usaremos un truco en el bucle
+        VariantsList = variantesOriginales;
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!ModelState.IsValid) return Page();
-
-        // 1. Validar si el Usuario (Cajero) existe
-        var userCheck = await _userService.GetByIdAsync(OrderDto.UserId);
-        if (userCheck == null || userCheck.Data == null)
+        if (!ModelState.IsValid)
         {
-            ErrorMessage = $"⚠️ El ID de Usuario/Cajero ({OrderDto.UserId}) no existe en el sistema.";
+            await LoadCatalogosAsync();
             return Page();
         }
 
-        // 2. Validar si el Cliente existe (sólo si ingresaron uno, ya que es opcional)
-        if (OrderDto.CustomerId.HasValue && OrderDto.CustomerId.Value > 0)
+        try
         {
-            var customerCheck = await _customerService.GetByIdAsync(OrderDto.CustomerId.Value);
-            if (customerCheck == null || customerCheck.Data == null)
+            // Enviamos la orden directo a la API (la fecha la controlará tu repositorio o API interna)
+            var responseOrder = await _orderService.CreateAsync(OrderDto);
+
+            if (responseOrder == null || !responseOrder.Success)
             {
-                ErrorMessage = $"⚠️ El ID de Cliente ({OrderDto.CustomerId}) no está registrado.";
+                ErrorMessage = responseOrder?.Message ?? "Error al registrar la orden base.";
+                await LoadCatalogosAsync();
                 return Page();
             }
+
+            return RedirectToPage("./List");
         }
-        
-        var paymentCheck = await _paymentMethodService.GetByIdAsync(OrderDto.PaymentMethodId);
-        if (paymentCheck == null || paymentCheck.Data == null)
+        catch (Exception ex)
         {
-            ErrorMessage = $"⚠️ El ID del método de pago ({OrderDto.PaymentMethodId}) no existe en el sistema.";
+            ErrorMessage = $"⚠️ Excepción en el flujo POS: {ex.Message}";
+            await LoadCatalogosAsync();
             return Page();
         }
-
-        // Si todo está bien, intentamos crear la orden
-        var response = await _orderService.CreateAsync(OrderDto);
-        if (response.Success)
-        {
-            return RedirectToPage("/Order/List");
-        }
-        
-       // var response = await _orderService.CreateAsync(OrderDto);
-
-        if (response == null)
-        {
-            ErrorMessage = "Response viene null";
-            return Page();
-        }
-        Console.WriteLine(response.Success);
-        Console.WriteLine(response.Message);
-
-        ErrorMessage = response.Message;
-        return Page();
-        
-        ErrorMessage = response.Message ?? "Error inesperado al guardar la orden.";
-        return Page();
     }
 }

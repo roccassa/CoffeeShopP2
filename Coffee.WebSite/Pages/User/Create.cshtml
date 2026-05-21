@@ -150,9 +150,9 @@
                                     <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
                                     <select asp-for="UserDto.RoleId" class="form-select" 
                                             asp-items="@(new SelectList(Model.RolesList, "Id", "Name"))" required>
-                                        <option value="" selected disabled>-- Seleccione Rol Real --</option>
+                                        <option value="" selected disabled>-- Seleccione Rol --</option>
                                     </select>
-                                </div>
+                                </div>  
                                 <span asp-validation-for="UserDto.RoleId" class="text-danger small"></span>
                             </div>
 
@@ -176,10 +176,8 @@
                                 <i class="bi bi-check-circle me-1"></i> Guardar Usuario
                             </button>
                         </div>
-
                     </form>
                 </div>
-
             </div>
         </div>
     </div>

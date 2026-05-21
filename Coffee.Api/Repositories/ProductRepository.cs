@@ -13,7 +13,18 @@ public class ProductRepository : IProductRepository
 
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        var sql = "SELECT id as Id, categoria_id as CategoryId, nombre as Name, descripcion as Description, esta_activo as IsActive FROM Productos";
+        var sql = @"
+        SELECT 
+            p.id as Id,
+            p.categoria_id as CategoryId,
+            c.nombre as CategoryName,
+            p.nombre as Name,
+            p.descripcion as Description,
+            p.esta_activo as IsActive
+        FROM Productos p
+        INNER JOIN Categorias c 
+            ON p.categoria_id = c.id";
+
         return await _context.Connection.QueryAsync<Product>(sql);
     }
 

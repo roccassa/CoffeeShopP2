@@ -10,7 +10,33 @@ public class OrderRepository : IOrderRepository {
     public OrderRepository(IDbContext context) => _context = context;
 
     public async Task<IEnumerable<Order>> GetAllAsync() {
-        var sql = "SELECT id as Id, usuario_id as UserId, cliente_id as CustomerId, metodo_pago_id as PaymentMethodId, fecha as Date, total as Total, estado as Status FROM Ordenes";
+        var sql = @"
+        SELECT
+            o.id as Id,
+            o.usuario_id as UserId,
+            u.nombre_completo as UserName,
+
+            o.cliente_id as CustomerId,
+            c.nombre as CustomerName,
+
+            o.metodo_pago_id as PaymentMethodId,
+            mp.nombre as PaymentMethodName,
+
+            o.total as Total,
+            o.estado as Status
+
+        FROM Ordenes o
+
+        INNER JOIN Usuarios u
+            ON o.usuario_id = u.id
+
+        LEFT JOIN Clientes c
+            ON o.cliente_id = c.id
+
+        INNER JOIN MetodosPago mp
+            ON o.metodo_pago_id = mp.id
+    ";
+        
         return await _context.Connection.QueryAsync<Order>(sql);
     }
 
