@@ -144,15 +144,13 @@
                                 <span asp-validation-for="UserDto.Username" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="mb-3">
                                 <label asp-for="UserDto.RoleId" class="form-label">Rol asignado</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-shield-lock-fill"></i></span>
-                                    <select asp-for="UserDto.RoleId" class="form-select" required>
-                                        <option value="" disabled selected>-- Seleccione Rol --</option>
-                                        <option value="1">Administrador</option>
-                                        <option value="2">Barista</option>
-                                        <option value="3">Mesero</option>
+                                    <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                                    <select asp-for="UserDto.RoleId" class="form-select" 
+                                            asp-items="@(new SelectList(Model.RolesList, "Id", "Name"))" required>
+                                        <option value="" selected disabled>-- Seleccione Rol Real --</option>
                                     </select>
                                 </div>
                                 <span asp-validation-for="UserDto.RoleId" class="text-danger small"></span>

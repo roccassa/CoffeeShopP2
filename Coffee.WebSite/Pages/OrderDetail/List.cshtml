@@ -147,10 +147,10 @@
                         {
                             decimal subtotal = detail.Quantity * detail.UnitPrice;
                             <tr>
-                                <td class="ps-4 fw-bold text-muted">#@detail.Id</td>
+                                <td class="ps-4 fw-bold text-muted">@detail.Id</td>
                                 <td>
                                     <span class="ticket-badge">
-                                        <i class="bi bi-receipt me-1"></i> Orden #@detail.OrderId
+                                        <i class="bi bi-receipt me-1"></i> Orden @detail.OrderId
                                     </span>
                                 </td>
                                 <td class="text-secondary small">

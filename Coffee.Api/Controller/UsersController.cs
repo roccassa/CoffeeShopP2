@@ -69,9 +69,12 @@ public class UsersController : ControllerBase
         var result = await _repository.SaveAsync(user);
         if (!result)
         {
+            response.Success = false;
             response.Errors.Add("Error creating user");
             return BadRequest(response);
         }
+        response.Success = true;
+        response.Message = "Usuario creado correctamente";
         response.Data = dto;
         return Ok(response);
     }

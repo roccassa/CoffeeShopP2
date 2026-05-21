@@ -69,9 +69,13 @@ public class OrderDetailsController : ControllerBase
         var result = await _repository.SaveAsync(detail);
         if (!result)
         {
+            response.Success = false;
+
             response.Errors.Add("Error creating order detail");
             return BadRequest(response);
         }
+        response.Success = true;
+        response.Message = "Desglose creado correctamente";
         response.Data = dto;
         return Ok(response);
     }

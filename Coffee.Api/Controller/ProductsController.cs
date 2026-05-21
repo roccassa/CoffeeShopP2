@@ -69,9 +69,12 @@ public class ProductsController : ControllerBase
         var result = await _repository.SaveAsync(product);
         if (!result)
         {
+            response.Success = false;
             response.Errors.Add("Error creating product");
             return BadRequest(response);
         }
+        response.Success = true;
+        response.Message = "Orden creada correctamente";
         response.Data = dto;
         return Ok(response);
     }

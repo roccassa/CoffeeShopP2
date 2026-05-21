@@ -5,8 +5,6 @@ namespace Coffee.WebSite.Services.Interfaces;
 
 public interface ICategoryService
 {
- 
-    
     // Quitamos los Response<> y dejamos los tipos directos que manda la API
     Task<List<CategoryDto>> GetAllAsync();
     

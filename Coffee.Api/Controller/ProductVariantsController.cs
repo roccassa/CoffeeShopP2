@@ -66,9 +66,13 @@ public class ProductVariantsController : ControllerBase
         var result = await _repository.SaveAsync(variant);
         if (!result)
         {
+            response.Success = false;
             response.Errors.Add("Error creating product variant");
             return BadRequest(response);
         }
+        
+        response.Success = true;
+        response.Message = "Presentacion creada correctamente";
         response.Data = dto;
         return Ok(response);
     }

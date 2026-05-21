@@ -61,6 +61,7 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<Response<OrderDto>>> Create([FromBody] OrderDto dto)
     {
         var response = new Response<OrderDto>();
+
         var order = new Coffee.Core.Entities.Order
         {
             UserId = dto.UserId,
@@ -69,15 +70,24 @@ public class OrdersController : ControllerBase
             Total = dto.Total,
             Status = dto.Status
         };
+
         var newId = await _repository.SaveAsync(order);
+
         if (newId == 0)
         {
+            response.Success = false;
             response.Errors.Add("Error creating order");
             return BadRequest(response);
         }
+
         dto.Id = newId;
+
+        response.Success = true;
+        response.Message = "Orden creada correctamente";
         response.Data = dto;
+
         return Ok(response);
+     
     }
 
     [HttpPut("{id:int}")]
