@@ -33,7 +33,7 @@ public class CreateModel : PageModel
         IUserService userService,
         IPaymentMethodService paymentService)
     {
-<<<<<<< Updated upstream
+
         _orderService = orderService;
         _productService = productService;
         _variantService = variantService;
@@ -67,10 +67,10 @@ public class CreateModel : PageModel
         // 2. CORRECCIÓN CLAVE: Inyectar el nombre del producto directamente en la variante
         // Si tu ProductVariantDto no tiene un campo para el nombre, usaremos un truco en el bucle
         VariantsList = variantesOriginales;
-=======
+
   
         OrderDto.Status = "Pendiente";
->>>>>>> Stashed changes
+
     }
 
     public async Task<IActionResult> OnPostAsync()

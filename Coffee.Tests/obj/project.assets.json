@@ -2337,23 +2337,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Antonio\\.nuget\\packages\\": {},
+    "C:\\Users\\yo\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.Tests\\Coffee.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.Tests\\Coffee.Tests.csproj",
       "projectName": "Coffee.Tests",
-      "projectPath": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.Tests\\Coffee.Tests.csproj",
-      "packagesPath": "C:\\Users\\Antonio\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Antonio\\Documents\\ITSPR\\E3\\Tecnologias web\\Tecnologias_P2\\CoffeeShopP2\\Coffee\\Coffee.Tests\\obj\\",
+      "projectPath": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.Tests\\Coffee.Tests.csproj",
+      "packagesPath": "C:\\Users\\yo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\yo\\Documents\\GitHub\\CoffeeShopP2\\Coffee.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Antonio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\yo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2362,7 +2362,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2381,7 +2380,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net10.0": {
@@ -2444,7 +2443,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
