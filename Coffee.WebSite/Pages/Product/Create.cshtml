@@ -1,187 +1,194 @@
 @page
 @model Coffee.WebSite.Pages.Product.CreateModel
 @{
-    ViewData["Title"] = "Agregar Producto";
+    ViewData["Title"] = "Nuevo Producto";
 }
 
-@section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Color crema principal */
-        }
-
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 4rem;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2.5rem;
-        }
-
-        .card-custom {
-            border: none;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.06);
-            padding: 2.5rem;
-        }
-
-        .form-label {
-            color: #2c1d11;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .input-group-text {
-            background-color: #fdfbf7;
-            border-color: #e9e4dc;
-            color: #6f4e37;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            padding: 0.65rem 0.75rem;
-            background-color: #fdfbf7;
-            font-size: 0.95rem;
-            border-radius: 8px;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .form-check-input:checked {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-        }
-
-        /* Botones integrados a la identidad */
-        .btn-coffee-save {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            color: white;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-save:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-            color: white;
-        }
-
-        .btn-coffee-cancel {
-            background-color: transparent;
-            border: 1px solid #c8b195;
-            color: #6f4e37;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-cancel:hover {
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            border-color: #6f4e37;
-        }
-
-        .alert-custom {
-            background-color: #fdf2f2;
-            border: 1px solid #fbd5d5;
-            color: #9b1c1c;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-    </style>
-}
-
-<div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Nuevo Producto</h1>
-            <p class="lead mb-0">Agrega un nuevo elemento al menú de venta de la cafetería</p>
-        </div>
-    </div>
-
+<div class="page-header">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-7 col-md-9">
-                
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="alert alert-custom d-flex align-items-center mb-4 p-3" role="alert">
-                        <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
-                        <div>@Model.ErrorMessage</div>
-                    </div>
-                }
+        <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-plus-circle me-2"></i>Nuevo Producto</h1>
+        <p class="mb-0 opacity-75 small">Agrega un nuevo elemento al menú y define sus presentaciones y precios</p>
+    </div>
+</div>
 
-                <div class="card card-custom">
-                    <form method="post" autocomplete="off">
-                        
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label asp-for="ProductDto.Name" class="form-label">Nombre del Producto</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-cup-hot-fill"></i></span>
-                                    <input asp-for="ProductDto.Name" class="form-control" placeholder="ej: Capuccino Helado" required autofocus />
-                                </div>
-                                <span asp-validation-for="ProductDto.Name" class="text-danger small"></span>
-                            </div>
+<div class="container" style="padding-bottom:3rem;">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
 
-                            <div class="col-12">
-                                <label asp-for="ProductDto.CategoryId" class="form-label">Categoría ID (Relación del Catálogo)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-folder2-open"></i></span>
-                                    <input asp-for="ProductDto.CategoryId" class="form-control" type="number" placeholder="ej: 1" required />
-                                </div>
-                                <span asp-validation-for="ProductDto.CategoryId" class="text-danger small"></span>
-                            </div>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert-form-error d-flex align-items-center gap-2 p-3 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
 
-                            <div class="col-12">
-                                <label asp-for="ProductDto.Description" class="form-label">Descripción o Ingredientes</label>
-                                <textarea asp-for="ProductDto.Description" class="form-control" rows="3" placeholder="Detalla los componentes del producto o notas para el ticket..."></textarea>
-                                <span asp-validation-for="ProductDto.Description" class="text-danger small"></span>
-                            </div>
+            <div class="form-card">
+                <form method="post" autocomplete="off" id="productForm">
 
-                            <div class="col-12 mt-3">
-                                <div class="form-check form-switch p-0 ps-5">
-                                    <input asp-for="ProductDto.IsActive" class="form-check-input fs-5 ms-5" type="checkbox" role="switch" checked />
-                                    <label asp-for="ProductDto.IsActive" class="form-check-label fw-bold pt-1 text-dark" style="margin-left: 10px;">Disponible para la venta inmediata</label>
-                                </div>
-                            </div>
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Producto</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-cup-hot-fill"></i></span>
+                            <input asp-for="ProductDto.Name" class="form-control"
+                                   placeholder="ej: Cappuccino Helado" required autofocus />
                         </div>
+                        <span asp-validation-for="ProductDto.Name" class="text-danger small"></span>
+                    </div>
 
-                        <hr class="text-muted my-4" />
+                    <!-- Categoría -->
+                    <div class="mb-3">
+                        <label class="form-label">Categoría</label>
+                        <select asp-for="ProductDto.CategoryId" class="form-select" required>
+                            <option value="">— Selecciona una categoría —</option>
+                            @foreach (var cat in Model.Categories)
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProductDto.CategoryId" class="text-danger small"></span>
+                    </div>
 
-                        <div class="d-flex justify-content-end gap-3">
-                            <a asp-page="./List" class="btn btn-coffee-cancel">
-                                <i class="bi bi-x-circle me-1"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-coffee-save">
-                                <i class="bi bi-plus-circle me-1"></i> Crear Producto
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label class="form-label">Descripción / Ingredientes <span class="text-muted fw-normal">(opcional)</span></label>
+                        <textarea asp-for="ProductDto.Description" class="form-control" rows="2"
+                                  placeholder="Ej: Espresso doble, leche de almendra, vainilla…"></textarea>
+                    </div>
+
+                    <!-- Imagen URL -->
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi bi-image me-1"></i>URL de imagen <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                            <input asp-for="ProductDto.ImageUrl" class="form-control"
+                                   placeholder="https://… o /images/producto.jpg"
+                                   oninput="previewImage(this.value)" />
+                        </div>
+                        <div class="mt-2">
+                            <div class="img-placeholder" id="imgPlaceholder">☕</div>
+                            <img id="imgPreview" src="" class="img-preview" style="display:none;"
+                                 onerror="this.style.display='none'; document.getElementById('imgPlaceholder').style.display='flex';" />
+                        </div>
+                    </div>
+
+                    <!-- Activo -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch ps-0">
+                            <input asp-for="ProductDto.IsActive" class="form-check-input ms-0 me-2"
+                                   type="checkbox" role="switch" checked id="isActiveSwitch" />
+                            <label class="form-check-label fw-semibold" for="isActiveSwitch">
+                                Disponible para la venta
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ═══ PRESENTACIONES Y PRECIOS ═══ -->
+                    <hr class="my-3" />
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <p class="form-label mb-0">Presentaciones y Precios</p>
+                                <small class="text-muted">Define los tamaños disponibles y su precio de venta</small>
+                            </div>
+                            <button type="button" onclick="addVariantRow()"
+                                    class="btn btn-sm"
+                                    style="background:var(--coffee-medium);color:#fff;border:none;border-radius:8px;">
+                                <i class="bi bi-plus-lg me-1"></i>Agregar
                             </button>
                         </div>
 
-                    </form>
-                </div>
+                        <div id="variantRows"></div>
 
+                        <div id="variantEmpty" class="text-muted small text-center py-3"
+                             style="border:2px dashed var(--soft-gray);border-radius:8px;">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Sin presentaciones — el producto no aparecerá en el Menú hasta agregar al menos una.
+                        </div>
+
+                        <input type="hidden" name="VariantsJson" id="variantsJsonInput" value="[]" />
+                    </div>
+
+                    <hr class="my-3" />
+                    <div class="d-flex justify-content-end gap-3">
+                        <a asp-page="./List" class="btn-form-cancel btn">
+                            <i class="bi bi-x-circle me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn-form-save btn">
+                            <i class="bi bi-plus-circle me-1"></i>Crear Producto
+                        </button>
+                    </div>
+                </form>
             </div>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+<partial name="_ValidationScriptsPartial" />
+<script>
+let rowCount = 0;
+
+function addVariantRow(size = '', price = '') {
+    const id = 'vr_' + (rowCount++);
+    const div = document.createElement('div');
+    div.className = 'variant-row d-flex gap-2 mb-2';
+    div.id = id;
+    div.innerHTML = `
+        <input type="text" class="form-control vr-size"
+               placeholder="Tamaño (ej: Chico, Grande, 500ml…)"
+               value="${esc(size)}" />
+        <div class="input-group" style="max-width:160px;">
+            <span class="input-group-text fw-bold">$</span>
+            <input type="number" class="form-control vr-price"
+                   placeholder="0.00" step="0.01" min="0" value="${price || ''}" />
+        </div>
+        <button type="button" class="btn btn-sm btn-danger" onclick="removeRow('${id}')">
+            <i class="bi bi-x-lg"></i>
+        </button>`;
+    document.getElementById('variantRows').appendChild(div);
+    updateEmpty();
+}
+
+function removeRow(id) {
+    document.getElementById(id)?.remove();
+    updateEmpty();
+}
+
+function updateEmpty() {
+    const empty = document.getElementById('variantEmpty');
+    empty.style.display = document.querySelectorAll('.variant-row').length ? 'none' : 'block';
+}
+
+function esc(s) {
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('productForm').addEventListener('submit', function() {
+    const rows = [];
+    document.querySelectorAll('.variant-row').forEach(r => {
+        const size  = r.querySelector('.vr-size').value.trim();
+        const price = parseFloat(r.querySelector('.vr-price').value) || 0;
+        if (size) rows.push({ size, price });
+    });
+    document.getElementById('variantsJsonInput').value = JSON.stringify(rows);
+});
+
+function previewImage(url) {
+    const img = document.getElementById('imgPreview');
+    const ph  = document.getElementById('imgPlaceholder');
+    if (url && url.trim()) {
+        img.src = url.trim();
+        img.style.display = 'block';
+        ph.style.display  = 'none';
+    } else {
+        img.style.display = 'none';
+        ph.style.display  = 'flex';
+    }
+}
+
+updateEmpty();
+</script>
 }

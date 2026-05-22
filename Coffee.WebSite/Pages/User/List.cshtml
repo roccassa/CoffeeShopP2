@@ -2,166 +2,231 @@
 @model Coffee.WebSite.Pages.User.ListModel
 
 @{
-    ViewData["Title"] = "Listado de Usuarios";
+    ViewData["Title"] = "Gestión de Usuarios";
 }
 
 @section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Color crema principal */
-        }
+<style>
+    .main-content { background-color:#fdfbf7; min-height:100vh; padding-bottom:3rem; }
+    .page-header  { background:linear-gradient(135deg,#2c1d11,#6f4e37); color:white; padding:1.4rem 0; margin-bottom:1.5rem; }
 
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 3rem;
-        }
+    .card { border:none; box-shadow:0 4px 20px rgba(44,29,17,0.08); border-radius:12px; overflow:hidden; }
+    .table thead { background:#2c1d11; color:#f5e8d3; }
+    .table th    { font-weight:600; text-transform:uppercase; font-size:0.79rem; letter-spacing:0.4px; padding:0.85rem 0.75rem; border:none; }
+    .table td    { padding:0.8rem 0.75rem; vertical-align:middle; border-color:#e9e4dc; }
+    .table-hover tbody tr:hover { background:#f5ece3; }
 
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
-        }
+    .form-control, .form-select { border-color:#e9e4dc; background:#fdfbf7; border-radius:8px; }
+    .form-control:focus, .form-select:focus { border-color:#6f4e37; box-shadow:0 0 0 0.2rem rgba(111,78,55,0.15); background:#fff; }
 
-        .card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
-        }
+    .role-badge {
+        background:#2c1d11; color:#f5e8d3;
+        padding:0.3rem 0.7rem; border-radius:6px;
+        font-size:0.78rem; font-weight:700;
+        letter-spacing:0.3px;
+    }
+    .role-admin   { background:#7c3aed; }
+    .role-barista { background:#0369a1; }
+    .role-cashier { background:#0f766e; }
 
-        .table thead {
-            background-color: #2c1d11;
-            color: #f5e8d3;
-        }
+    .status-active   { background:#dcfce7; color:#15803d; font-size:0.78rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:5px; }
+    .status-inactive { background:#fee2e2; color:#b91c1c; font-size:0.78rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:5px; }
 
-        .btn-success {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-        }
-
-        .btn-success:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-        }
-    </style>
+    /* Validation rules panel */
+    .rules-card { background:#fdfbf7; border:1px solid #e9e4dc; border-radius:12px; padding:1.1rem; }
+    .rule-item {
+        display:flex; align-items:center; gap:0.6rem;
+        padding:0.4rem 0; font-size:0.82rem; border-bottom:1px solid #f0e8df;
+    }
+    .rule-item:last-child { border-bottom:none; }
+    .rule-icon { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; }
+    .rule-ok   { background:#dcfce7; color:#15803d; }
+    .rule-info { background:#dbeafe; color:#1e40af; }
+    .rule-warn { background:#fef3c7; color:#d97706; }
+</style>
 }
 
 <div class="main-content">
-    <!-- Header elegante -->
-    <div class="page-header text-center">
+    <div class="page-header">
         <div class="container">
-            <h1 class="display-5 fw-bold">Gestión de Usuarios</h1>
-            <p class="lead mb-0">Administra el equipo de la cafetería</p>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <h1 class="fw-bold mb-0 fs-4">
+                        <i class="bi bi-people-fill me-2"></i>Gestión de Usuarios
+                    </h1>
+                    <p class="mb-0 opacity-75 small">Validaciones y Roles del equipo de la cafetería</p>
+                </div>
+                <a asp-page="./Create" class="btn btn-light fw-bold" style="border-radius:8px; color:#2c1d11;">
+                    <i class="bi bi-person-plus-fill me-1"></i>Nuevo Usuario
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- Formulario de búsqueda -->
-        <form method="get" class="mb-4">
-            @Html.AntiForgeryToken()
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
+        <div class="row g-3 align-items-start">
+
+            <!-- Left: User Table -->
+            <div class="col-lg-8">
+
+                <!-- Search -->
+                <form method="get" class="mb-3">
+                    @Html.AntiForgeryToken()
                     <div class="input-group">
                         <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                               class="form-control" 
-                               placeholder="Buscar por username, nombre o ID..." />
-                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
-                            <i class="bi bi-search"></i> Buscar
+                               class="form-control" placeholder="Buscar por usuario, nombre o ID..." />
+                        <button class="btn btn-coffee">
+                            <i class="bi bi-search"></i>
                         </button>
                     </div>
+                </form>
+
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3" style="width:8%">ID</th>
+                                    <th style="width:18%">Usuario</th>
+                                    <th style="width:25%">Nombre Completo</th>
+                                    <th style="width:15%">Rol</th>
+                                    <th style="width:12%">Estado</th>
+                                    <th class="text-end pe-3" style="width:22%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.Users != null && Model.Users.Any())
+                            {
+                                @foreach (var user in Model.Users)
+                                {
+                                    var roleName = (user.RoleName ?? "").ToLower();
+                                    var roleCss  = roleName.Contains("admin")   ? "role-admin"
+                                                 : roleName.Contains("barista") ? "role-barista"
+                                                 : roleName.Contains("caj")     ? "role-cashier"
+                                                 : "";
+                                    <tr>
+                                        <td class="ps-3 fw-bold text-muted">@user.Id</td>
+                                        <td class="fw-bold">
+                                            <i class="bi bi-person-circle me-1 text-muted"></i>@user.Username
+                                        </td>
+                                        <td>@user.FullName</td>
+                                        <td>
+                                            <span class="role-badge @roleCss">@user.RoleName</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-active">
+                                                <i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>Activo
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <a asp-page="./Update" asp-route-id="@user.Id"
+                                                   class="btn btn-warning btn-sm" title="Editar usuario">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm" onclick="deleteUser(@user.Id)"
+                                                        title="Eliminar usuario">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="bi bi-people d-block fs-2 mb-2 opacity-50"></i>
+                                        No se encontraron usuarios.
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <a asp-page="./Create" class="btn btn-success">
-                        <i class="bi bi-plus-lg"></i> Agregar Nuevo Usuario
+
+                <!-- Bulk actions bar -->
+                <div class="d-flex gap-2 mt-3 flex-wrap">
+                    <a asp-page="./Create" class="btn btn-coffee fw-semibold" style="font-size:0.88rem;">
+                        <i class="bi bi-person-plus me-1"></i>Crear Nuevo Usuario
+                    </a>
+                    <span class="badge bg-secondary d-flex align-items-center px-3" style="border-radius:8px; font-size:0.82rem;">
+                        @(Model.Users?.Count ?? 0) usuario(s) registrado(s)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Right: Validation rules panel (Scene 6) -->
+            <div class="col-lg-4">
+                <div class="rules-card">
+                    <h6 class="fw-bold mb-3" style="color:#2c1d11;">
+                        <i class="bi bi-shield-check me-2"></i>Reglas de Validación
+                    </h6>
+
+                    <div class="rule-item">
+                        <div class="rule-icon rule-info"><i class="bi bi-lock-fill"></i></div>
+                        <span>Las contraseñas se almacenan con hash BCrypt</span>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-icon rule-ok"><i class="bi bi-check-lg"></i></div>
+                        <span>Verificación de duplicados (Username)</span>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-icon rule-ok"><i class="bi bi-check-lg"></i></div>
+                        <span>Campos requeridos validados</span>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-icon rule-warn"><i class="bi bi-shield-lock"></i></div>
+                        <span>Solo Admin puede crear/eliminar usuarios</span>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-icon rule-info"><i class="bi bi-person-badge"></i></div>
+                        <span>Roles: Admin, Barista, Cajero</span>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <h6 class="fw-bold mb-2" style="color:#2c1d11; font-size:0.88rem;">
+                        <i class="bi bi-diagram-3 me-1"></i>Roles disponibles
+                    </h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="role-badge role-admin">Admin</span>
+                        <span class="role-badge role-barista">Barista</span>
+                        <span class="role-badge role-cashier">Cajero</span>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <a asp-page="./Create" class="btn btn-coffee w-100 fw-bold">
+                        <i class="bi bi-person-plus-fill me-2"></i>Crear Nuevo Usuario
                     </a>
                 </div>
             </div>
-        </form>
 
-        <!-- Tabla -->
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4">ID</th>
-                            <th>Username</th>
-                            <th>Nombre Completo</th>
-                            <th>Rol</th>
-                            <th class="text-end pe-4">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @if (Model.Users != null && Model.Users.Any())
-                    {
-                        @foreach (var user in Model.Users)
-                        {
-                            <tr>
-                                <td class="ps-4 fw-bold">@user.Id</td>
-                                <td class="fw-bold">@user.Username</td>
-                                <td>@user.FullName</td>
-                                <td>
-                                    <span class="badge bg-dark">@user.RoleName</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a asp-page="./Update" asp-route-id="@user.Id" 
-                                       class="btn btn-warning btn-sm me-2">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <button class="btn btn-danger btn-sm" 
-                                            onclick="deleteUser(@user.Id)">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-5">
-                                No se encontraron usuarios.
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        function deleteUser(id) {
-            if (!confirm("¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.")) 
-                return;
-
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
-            fetch(`/User/List?handler=Delete&id=${id}`, {
-                method: 'POST',
-                headers: { 
-                    'RequestVerificationToken': token ?? ''
-                }
-            })
-            .then(r => { 
-                if (!r.ok) throw new Error("Error del servidor"); 
-                return r.json(); 
-            })
-            .then(result => {
-                if (result === true || result.success === true || result === "true") {
-                    alert("✅ Usuario eliminado correctamente");
-                    location.reload();
-                } else {
-                    alert("❌ Error al eliminar el usuario");
-                }
-            })
-            .catch(e => {
-                console.error(e);
-                alert("Error al procesar la solicitud");
-            });
+<script>
+function deleteUser(id) {
+    if (!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) return;
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch(`/User/List?handler=Delete&id=${id}`, {
+        method: 'POST',
+        headers: { 'RequestVerificationToken': token ?? '' }
+    })
+    .then(r => { if(!r.ok) throw new Error('Error del servidor'); return r.json(); })
+    .then(result => {
+        if (result === true || result?.success === true || result === 'true') {
+            location.reload();
+        } else {
+            alert('Error al eliminar el usuario.');
         }
-    </script>
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+</script>
 }

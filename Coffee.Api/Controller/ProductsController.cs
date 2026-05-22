@@ -29,7 +29,8 @@ public class ProductsController : ControllerBase
                 Name = p.Name,
                 CategoryName = p.CategoryName,
                 Description = p.Description,
-                IsActive = p.IsActive
+                IsActive = p.IsActive,
+                ImageUrl = p.ImageUrl
             }).ToList()
         };
         return Ok(response);
@@ -65,7 +66,8 @@ public class ProductsController : ControllerBase
             CategoryId = dto.CategoryId,
             Name = dto.Name,
             Description = dto.Description,
-            IsActive = dto.IsActive
+            IsActive = dto.IsActive,
+            ImageUrl = dto.ImageUrl ?? string.Empty
         };
         var result = await _repository.SaveAsync(product);
         if (!result)
@@ -75,7 +77,8 @@ public class ProductsController : ControllerBase
             return BadRequest(response);
         }
         response.Success = true;
-        response.Message = "Orden creada correctamente";
+        response.Message = "Producto creado correctamente";
+        dto.Id = product.Id;
         response.Data = dto;
         return Ok(response);
     }
@@ -96,7 +99,8 @@ public class ProductsController : ControllerBase
             CategoryId = dto.CategoryId,
             Name = dto.Name,
             Description = dto.Description,
-            IsActive = dto.IsActive
+            IsActive = dto.IsActive,
+            ImageUrl = dto.ImageUrl ?? string.Empty
         };
         var result = await _repository.UpdateAsync(product);
         if (!result)

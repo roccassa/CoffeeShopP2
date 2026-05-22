@@ -6,111 +6,43 @@
 }
 
 @section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Color crema principal */
-        }
+<style>
+    .main-content { background-color: var(--cream); min-height: 100vh; padding-bottom: 3rem; }
 
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 3rem;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .table thead {
-            background-color: #2c1d11;
-            color: #f5e8d3;
-        }
-
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 0.75rem;
-        }
-
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        .btn-success {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            font-weight: 500;
-        }
-
-        .btn-success:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            background-color: #fdfbf7;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .category-badge {
-            font-size: 0.95rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            display: inline-block;
-            border: 1px solid #c8b195;
-        }
-    </style>
+    .category-badge {
+        font-size: 0.88rem; padding: 0.3rem 0.75rem; border-radius: 6px;
+        background-color: var(--cream-warm); color: var(--coffee-dark);
+        display: inline-block; border: 1px solid #c8b195; font-weight: 600;
+    }
+    .btn-success { background-color: var(--coffee-medium); border-color: var(--coffee-medium); font-weight: 600; }
+    .btn-success:hover { background-color: var(--coffee-dark); border-color: var(--coffee-dark); }
+</style>
 }
 
 <div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Categorías del Menú</h1>
-            <p class="lead mb-0">Organiza las secciones del menú comercial que aparecen en la pantalla de toma de órdenes</p>
+    <div class="page-header">
+        <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-tags-fill me-2"></i>Categorías del Menú</h1>
+                <p class="mb-0 opacity-75 small">Organiza las secciones que aparecen en la pantalla de toma de órdenes</p>
+            </div>
+            <a asp-page="./Create" class="btn btn-light fw-bold" style="border-radius:8px; color:var(--coffee-dark);">
+                <i class="bi bi-folder-plus me-1"></i>Nueva Categoría
+            </a>
         </div>
     </div>
 
     <div class="container">
         <form method="get" class="mb-4">
             @Html.AntiForgeryToken()
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                               class="form-control" 
-                               placeholder="Buscar categoría por nombre o ID..." />
-                        <button id="btnSearch" class="btn btn-primary" style="background-color:#2c1d11; border:none;">
-                            <i class="bi bi-search"></i> Buscar
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <a asp-page="./Create" class="btn btn-success">
-                        <i class="bi bi-folder-plus"></i> Agregar Nueva Categoría
-                    </a>
-                </div>
+            <div class="input-group" style="max-width:420px;">
+                <span class="input-group-text" style="background:var(--cream-warm);border-color:var(--soft-gray);">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                       class="form-control" placeholder="Buscar por nombre o ID…"
+                       style="border-color:var(--soft-gray);" />
+                <button class="btn" style="background:var(--coffee-dark);color:#fff;border:none;">Buscar</button>
             </div>
         </form>
         

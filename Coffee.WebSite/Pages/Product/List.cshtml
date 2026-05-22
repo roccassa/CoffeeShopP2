@@ -1,202 +1,158 @@
 @page
 @model Coffee.WebSite.Pages.Product.ListModel
-
 @{
-    ViewData["Title"] = "Listado de Productos";
+    ViewData["Title"] = "Catálogo de Productos";
 }
 
-@section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Color crema principal */
-        }
-
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 3rem;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .table thead {
-            background-color: #2c1d11;
-            color: #f5e8d3;
-        }
-
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 0.75rem;
-        }
-
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        .btn-success {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            font-weight: 500;
-        }
-
-        .btn-success:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            background-color: #fdfbf7;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .product-name {
-            color: #2c1d11;
-            font-size: 1rem;
-        }
-    </style>
-}
-
-<div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Catálogo de Productos</h1>
-            <p class="lead mb-0">Administra las bebidas, repostería y artículos disponibles en el menú</p>
+<div class="page-header">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+            <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-cup-hot-fill me-2"></i>Catálogo de Productos</h1>
+            <p class="mb-0 opacity-75 small">Administra las bebidas, repostería y artículos disponibles en el menú</p>
         </div>
-    </div>
-
-    <div class="container">
-        <form method="get" class="mb-4">
-            @Html.AntiForgeryToken()
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                               class="form-control" 
-                               placeholder="Buscar por nombre o ID de producto..." />
-                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
-                            <i class="bi bi-search"></i> Buscar
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <a asp-page="./Create" class="btn btn-success">
-                        <i class="bi bi-plus-lg"></i> Agregar Nuevo Producto
-                    </a>
-                </div>
-            </div>
-        </form>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4" style="width: 10%;">ID</th>
-                            <th style="width: 25%;">Nombre</th>
-                            <th style="width: 30%;">Descripción</th>
-                            <th style="width: 15%;">Categoría</th>
-                            <th style="width: 10%;">Activo</th>
-                            <th class="text-end pe-4" style="width: 10%;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @if (Model.Products != null && Model.Products.Any())
-                    {
-                        @foreach (var product in Model.Products)
-                        {
-                            <tr>
-                                <td class="ps-4 fw-bold text-muted">@product.Id</td>
-                                <td>
-                                    <span class="product-name fw-bold">@product.Name</span>
-                                </td>
-                                <td class="text-secondary small">@product.Description</td>
-                                <td>
-                                    <span class="badge bg-dark px-2.5 py-1.5">
-                                        <i class="bi bi-folder2-open me-1"></i> @product.CategoryName
-                                    </span>
-                                </td>
-                                <td>
-                                    @if (product.IsActive)
-                                    {
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">Sí</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">No</span>
-                                    }
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a asp-page="./Update" asp-route-id="@product.Id" class="btn btn-warning btn-sm me-2">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(@product.Id)">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-5">
-                                <i class="bi bi-box-seam display-6 d-block mb-2 text-muted"></i>
-                                No se encontraron productos en el catálogo.
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <a asp-page="./Create" class="btn-form-save btn">
+            <i class="bi bi-plus-circle me-1"></i>Nuevo Producto
+        </a>
     </div>
 </div>
 
+<div class="container" style="padding-bottom:3rem;">
+
+    <!-- Search bar -->
+    <form method="get" class="mb-4">
+        <div class="input-group" style="max-width:420px;">
+            <span class="input-group-text" style="background:var(--cream-warm); border-color:var(--soft-gray);">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                   class="form-control" placeholder="Buscar por nombre o ID…"
+                   style="border-color:var(--soft-gray); background:var(--cream);" />
+            <button class="btn" style="background:var(--coffee-dark); color:#fff; border:none;">Buscar</button>
+        </div>
+    </form>
+
+    @if (Model.Products.Any())
+    {
+        <div class="row g-3">
+            @foreach (var p in Model.Products)
+            {
+                var variants = Model.VariantsByProduct.GetValueOrDefault(p.Id) ?? new();
+                <div class="col-12">
+                    <div class="form-card d-flex align-items-start gap-3 py-3 px-4">
+
+                        <!-- Imagen / ícono -->
+                        <div style="flex-shrink:0;">
+                            @if (!string.IsNullOrEmpty(p.ImageUrl))
+                            {
+                                <img src="@p.ImageUrl" alt="@p.Name"
+                                     style="width:60px;height:60px;object-fit:cover;border-radius:12px;" />
+                            }
+                            else
+                            {
+                                <div style="width:60px;height:60px;border-radius:12px;background:var(--cream-warm);
+                                            display:flex;align-items:center;justify-content:center;font-size:1.8rem;">
+                                    ☕
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Info -->
+                        <div style="flex:1; min-width:0;">
+                            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                <span class="fw-bold" style="color:var(--coffee-dark); font-size:1rem;">@p.Name</span>
+                                <span class="badge" style="background:var(--coffee-medium); font-size:0.7rem;">@p.CategoryName</span>
+                                @if (p.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.7rem;">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size:0.7rem;">Inactivo</span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(p.Description))
+                            {
+                                <p class="text-muted small mb-2" style="margin:0 0 0.4rem;">@p.Description</p>
+                            }
+
+                            <!-- Variantes / precios -->
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                @if (variants.Any())
+                                {
+                                    @foreach (var v in variants)
+                                    {
+                                        <span class="badge"
+                                              style="background:var(--cream-warm);color:var(--coffee-dark);
+                                                     border:1px solid var(--soft-gray);font-weight:600;font-size:0.78rem;padding:0.35rem 0.7rem;">
+                                            @v.Size · $@v.Price.ToString("F2")
+                                        </span>
+                                    }
+                                    <a asp-page="/ProductVariant/Create" asp-route-productId="@p.Id"
+                                       class="badge text-decoration-none"
+                                       style="background:transparent;border:1px dashed var(--coffee-medium);
+                                              color:var(--coffee-medium);font-size:0.78rem;padding:0.35rem 0.7rem;">
+                                        <i class="bi bi-plus"></i> Precio
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size:0.75rem;">
+                                        <i class="bi bi-exclamation-circle me-1"></i>Sin presentaciones
+                                    </span>
+                                    <a asp-page="/ProductVariant/Create" asp-route-productId="@p.Id"
+                                       class="btn btn-sm"
+                                       style="background:var(--coffee-medium);color:#fff;font-size:0.78rem;padding:0.25rem 0.7rem;border-radius:6px;">
+                                        <i class="bi bi-plus-circle me-1"></i>Agregar precio
+                                    </a>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="d-flex gap-2 flex-shrink-0 align-items-center">
+                            <a asp-page="./Update" asp-route-id="@p.Id"
+                               class="btn btn-sm"
+                               style="background:var(--cream-warm);border:1px solid var(--soft-gray);color:var(--coffee-dark);">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(@p.Id, '@p.Name.Replace("'","\\'")')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-cup-hot display-4 d-block mb-3 opacity-50"></i>
+            <p class="fw-semibold">No se encontraron productos@(!string.IsNullOrEmpty(Model.SearchTerm) ? " para \"" + Model.SearchTerm + "\"" : "").</p>
+            <a asp-page="./Create" class="btn-form-save btn mt-2">
+                <i class="bi bi-plus-circle me-1"></i>Crear primer producto
+            </a>
+        </div>
+    }
+</div>
+
 @section Scripts {
-    <script>
-        function deleteProduct(id) {
-            if (!confirm("¿Estás seguro de que deseas eliminar este producto del menú comercial?")) 
-                return;
+<script>
+function deleteProduct(id, name) {
+    if (!confirm(`¿Eliminar el producto "${name}"? Esta acción también eliminará sus presentaciones.`)) return;
 
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
-            fetch(`/Product/List?handler=Delete&id=${id}`, {
-                method: 'POST',
-                headers: { 'RequestVerificationToken': token ?? '' }
-            })
-            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(result => {
-                if (result === true || result.success === true || result === "true") {
-                    alert("✅ Producto eliminado correctamente");
-                    location.reload();
-                } else {
-                    alert("❌ Error al eliminar el producto");
-                }
-            })
-            .catch(e => alert("Error crítico al procesar la solicitud: " + e.message));
-        }
-    </script>
+    fetch(`/Product/List?handler=Delete&id=${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success === true) location.reload();
+        else alert('Error al eliminar: ' + (res.message ?? 'Error desconocido'));
+    })
+    .catch(e => alert('Error de conexión: ' + e.message));
+}
+</script>
 }

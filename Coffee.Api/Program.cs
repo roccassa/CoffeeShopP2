@@ -43,17 +43,20 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Manejo global de excepciones — siempre devuelve JSON, nunca HTML
+app.UseExceptionHandler(errApp => errApp.Run(async ctx =>
 {
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseCors("AllowAll");
-    app.UseHttpsRedirection();
-}
+    ctx.Response.StatusCode  = 500;
+    ctx.Response.ContentType = "application/json";
+    var feature = ctx.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+    var msg = feature?.Error?.Message ?? "Error interno del servidor";
+    await ctx.Response.WriteAsJsonAsync(new { success = false, message = msg, errors = new[] { msg } });
+}));
 
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors("AllowAll");
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

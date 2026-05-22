@@ -41,10 +41,21 @@ public class OrderRepository : IOrderRepository {
     }
 
     public async Task<int> SaveAsync(Order order) {
-        var sql = @"INSERT INTO Ordenes (usuario_id, cliente_id, metodo_pago_id, total, estado) 
-                    VALUES (@UserId, @CustomerId, @PaymentMethodId, @Total, @Status);
-                    SELECT LAST_INSERT_ID();";
-        return await _context.Connection.ExecuteScalarAsync<int>(sql, order);
+        var insertSql = @"INSERT INTO Ordenes (usuario_id, cliente_id, metodo_pago_id, total, estado)
+                          VALUES (@UserId, @CustomerId, @PaymentMethodId, @Total, @Status)";
+
+        bool wasOpen = _context.Connection.State == System.Data.ConnectionState.Open;
+        if (!wasOpen) _context.Connection.Open();
+
+        try
+        {
+            await _context.Connection.ExecuteAsync(insertSql, order);
+            return await _context.Connection.ExecuteScalarAsync<int>("SELECT LAST_INSERT_ID()");
+        }
+        finally
+        {
+            if (!wasOpen) _context.Connection.Close();
+        }
     }
 
     public async Task<bool> UpdateStatusAsync(int id, string status) {

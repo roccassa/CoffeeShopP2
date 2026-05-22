@@ -1,35 +1,547 @@
-html {
-  font-size: 14px;
+/* ===================================
+   COFFEE SHOP — DESIGN SYSTEM
+   =================================== */
+:root {
+  --coffee-dark:   #2c1d11;
+  --coffee-medium: #6f4e37;
+  --coffee-light:  #8c857b;
+  --cream:         #fdfbf7;
+  --cream-warm:    #f5e8d3;
+  --soft-gray:     #e9e4dc;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
+html { font-size: 14px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
 
 body {
-  margin-bottom: 60px;
+  background-color: var(--cream);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--coffee-dark);
+  min-height: 100vh;
+  margin-bottom: 0;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* === NAVBAR === */
+.coffee-navbar {
+  background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 12px rgba(44,29,17,0.35);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+.coffee-navbar .navbar-brand {
+  color: var(--cream-warm) !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.3px;
+}
+.coffee-navbar .nav-link {
+  color: rgba(245,232,211,0.85) !important;
+  font-weight: 500;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.18s;
+  font-size: 0.92rem;
+}
+.coffee-navbar .nav-link:hover,
+.coffee-navbar .nav-link.active {
+  background-color: rgba(255,255,255,0.15);
+  color: #fff !important;
+}
+.coffee-navbar .navbar-text {
+  color: rgba(245,232,211,0.85);
+  font-size: 0.88rem;
+}
+.coffee-navbar .dropdown-menu {
+  background-color: var(--coffee-dark);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 0.4rem;
+}
+.coffee-navbar .dropdown-item {
+  color: rgba(245,232,211,0.85);
+  font-size: 0.88rem;
+  border-radius: 5px;
+  padding: 0.45rem 0.9rem;
+}
+.coffee-navbar .dropdown-item:hover {
+  background-color: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.coffee-navbar .navbar-toggler {
+  border-color: rgba(245,232,211,0.5);
+}
+.coffee-navbar .navbar-toggler-icon {
+  filter: invert(1);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* === PAGE WRAPPER === */
+.main-body { min-height: calc(100vh - 56px); }
+
+/* La página POS NO debe tener padding — ocupa toda la pantalla */
+.pos-page .main-body { padding: 0; }
+
+/* === PAGE HEADER === */
+.page-header {
+  background: linear-gradient(135deg, var(--coffee-dark), var(--coffee-medium));
+  color: white;
+  padding: 1.4rem 0;
+  margin-bottom: 1.5rem;
+}
+.page-header h1 { font-weight: 700; }
+
+/* === CARDS === */
+.card {
+  border: none;
+  box-shadow: 0 4px 20px rgba(44,29,17,0.08);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.custom-navbar {
-  background-color: #4B2E1E;
+/* === TABLES === */
+.table thead { background-color: var(--coffee-dark); color: var(--cream-warm); }
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  padding: 0.9rem 0.75rem;
+  border: none;
 }
+.table td {
+  padding: 0.8rem 0.75rem;
+  vertical-align: middle;
+  border-color: var(--soft-gray);
+}
+.table-hover tbody tr:hover { background-color: #f5ece3; cursor: pointer; }
+.table-hover tbody tr.selected-row { background-color: #f0e0cc !important; }
+
+/* === BUTTONS === */
+.btn-coffee {
+  background-color: var(--coffee-dark);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+.btn-coffee:hover { background-color: var(--coffee-medium); color: #fff; }
+.btn-coffee-outline {
+  border: 2px solid var(--coffee-medium);
+  color: var(--coffee-medium);
+  background: transparent;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.btn-coffee-outline:hover { background-color: var(--coffee-medium); color: #fff; }
+
+/* === FORMS === */
+.form-control, .form-select {
+  border-color: var(--soft-gray);
+  background-color: var(--cream);
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--coffee-medium);
+  box-shadow: 0 0 0 0.2rem rgba(111,78,55,0.18);
+  background-color: #fff;
+}
+
+/* === STATUS BADGES === */
+.status-badge {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+}
+.status-pendiente   { background:#fef3c7; color:#d97706; border:1px solid #fcd34d; }
+.status-completado  { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+.status-cancelado   { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; }
+.badge-pay-cash { background:#d1fae5; color:#065f46; font-weight:600; border-radius:5px; padding:0.3rem 0.6rem; font-size:0.78rem; }
+.badge-pay-card { background:#dbeafe; color:#1e40af; font-weight:600; border-radius:5px; padding:0.3rem 0.6rem; font-size:0.78rem; }
+
+/* === SHARED FORM STYLES === */
+.form-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(44,29,17,0.07);
+  padding: 2rem;
+  border: none;
+}
+.form-label { color: var(--coffee-dark); font-weight: 600; font-size: 0.88rem; margin-bottom: 0.45rem; }
+.input-group-text { background: var(--cream); border-color: var(--soft-gray); color: var(--coffee-medium); }
+.form-check-input:checked { background-color: var(--coffee-medium); border-color: var(--coffee-medium); }
+.alert-form-error { background:#fdf2f2; border:1px solid #fbd5d5; color:#9b1c1c; border-radius:8px; font-size:0.88rem; }
+.btn-form-save {
+  background: var(--coffee-medium); color:#fff; border:none;
+  font-weight:700; padding:0.65rem 1.5rem; border-radius:8px; transition:all 0.2s;
+}
+.btn-form-save:hover { background: var(--coffee-dark); color:#fff; }
+.btn-form-update {
+  background: var(--coffee-dark); color:#fff; border:none;
+  font-weight:700; padding:0.65rem 1.5rem; border-radius:8px; transition:all 0.2s;
+}
+.btn-form-update:hover { background: var(--coffee-medium); color:#fff; }
+.btn-form-cancel {
+  border:1px solid #c8b195; color:var(--coffee-medium); background:transparent;
+  font-weight:600; padding:0.65rem 1.5rem; border-radius:8px; transition:all 0.2s;
+}
+.btn-form-cancel:hover { background:var(--cream-warm); color:var(--coffee-dark); border-color:var(--coffee-medium); }
+.img-preview {
+  width:100%; max-height:200px; object-fit:cover;
+  border-radius:10px; border:2px solid var(--soft-gray);
+  background: var(--cream-warm);
+}
+.img-placeholder {
+  width:100%; height:120px; background:var(--cream-warm);
+  border-radius:10px; border:2px dashed var(--soft-gray);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--coffee-light); font-size:2.5rem;
+}
+.form-select {
+  border-color: var(--soft-gray);
+  background-color: var(--cream);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+.form-select:focus {
+  border-color: var(--coffee-medium);
+  box-shadow: 0 0 0 0.2rem rgba(111,78,55,0.15);
+  background-color: #fff;
+}
+
+/* =============================
+   MENÚ — POINT OF SALE
+   ============================= */
+.pos-wrapper {
+  display: flex;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+
+/* --- Categories sidebar --- */
+.pos-categories {
+  width: 115px;
+  min-width: 115px;
+  background: var(--coffee-dark);
+  padding: 0.75rem 0.4rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.pos-category-btn {
+  background: rgba(255,255,255,0.07);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: rgba(245,232,211,0.8);
+  text-align: center;
+  padding: 0.7rem 0.3rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  user-select: none;
+  width: 100%;
+}
+.pos-category-btn:hover, .pos-category-btn.active {
+  background: var(--coffee-medium);
+  border-color: var(--cream-warm);
+  color: #fff;
+}
+.pos-category-btn i {
+  font-size: 1.6rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* --- Products grid --- */
+.pos-products {
+  flex: 1;
+  background: var(--cream);
+  padding: 0.85rem;
+  overflow-y: auto;
+}
+.pos-search {
+  margin-bottom: 0.75rem;
+}
+.pos-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: 0.65rem;
+}
+.pos-product-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: all 0.18s;
+  user-select: none;
+}
+.pos-product-card:hover {
+  border-color: var(--coffee-medium);
+  box-shadow: 0 4px 16px rgba(111,78,55,0.18);
+  transform: translateY(-2px);
+}
+.pos-product-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--cream-warm);
+  border-radius: 50%;
+  margin: 0 auto 0.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+}
+.pos-product-name { font-size: 0.8rem; font-weight: 700; color: var(--coffee-dark); margin-bottom: 0.2rem; }
+.pos-product-from { font-size: 0.78rem; color: var(--coffee-medium); font-weight: 600; }
+
+/* --- Current Ticket --- */
+.pos-ticket {
+  width: 275px;
+  min-width: 275px;
+  background: var(--cream-warm);
+  border-left: 3px solid var(--soft-gray);
+  display: flex;
+  flex-direction: column;
+}
+.pos-ticket-header {
+  background: var(--coffee-dark);
+  color: var(--cream-warm);
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pos-ticket-items { flex:1; overflow-y:auto; padding:0.65rem 0.75rem; }
+.ticket-empty {
+  text-align: center;
+  color: var(--coffee-light);
+  padding: 2rem 1rem;
+  font-size: 0.85rem;
+}
+.ticket-item {
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--soft-gray);
+  gap: 0.3rem;
+  font-size: 0.84rem;
+}
+.ticket-item-name  { flex:1; font-weight:500; color:var(--coffee-dark); line-height:1.2; }
+.ticket-item-name small { display:block; color:var(--coffee-light); font-size:0.72rem; }
+.ticket-item-controls { display:flex; align-items:center; gap:0.2rem; }
+.ti-btn {
+  background: var(--coffee-medium);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.15s;
+}
+.ti-btn:hover { background: var(--coffee-dark); }
+.ticket-item-qty {
+  font-weight: 700;
+  font-size: 0.88rem;
+  min-width: 18px;
+  text-align: center;
+  color: var(--coffee-dark);
+}
+.ticket-item-price {
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--coffee-medium);
+  min-width: 52px;
+  text-align: right;
+  font-size: 0.84rem;
+}
+.ticket-item-remove {
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 0.2rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s;
+}
+.ticket-item-remove:hover { color: #991b1b; }
+
+/* --- Ticket footer / Pay --- */
+.pos-ticket-footer {
+  border-top: 2px dashed #c8b195;
+  padding: 0.75rem 1rem;
+  background: #fff;
+}
+.ticket-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--coffee-dark);
+  margin-bottom: 0.7rem;
+  font-family: 'Courier New', monospace;
+}
+.btn-pay {
+  width: 100%;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-pay:hover:not(:disabled) { background: #15803d; }
+.btn-pay:disabled { background: var(--soft-gray); color: var(--coffee-light); cursor: not-allowed; }
+.btn-clear-ticket {
+  width: 100%;
+  background: transparent;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  padding: 0.4rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  margin-top: 0.4rem;
+  transition: all 0.15s;
+}
+.btn-clear-ticket:hover { background: #fee2e2; }
+
+/* ==============================
+   TICKET PRINT / PDF VIEW
+   ============================== */
+.ticket-viewer {
+  background: #fff;
+  border: 1px solid var(--soft-gray);
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+.ticket-viewer-header {
+  background: var(--coffee-dark);
+  color: var(--cream-warm);
+  padding: 1rem 1.25rem;
+  text-align: center;
+}
+.ticket-viewer-header h5 { font-weight: 700; margin-bottom: 0.15rem; }
+.ticket-viewer-body { padding: 1rem 1.25rem; }
+.ticket-divider { border-top: 2px dashed #ccc; margin: 0.75rem 0; }
+.ticket-line { display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:0.35rem; }
+.ticket-line.total { font-weight:800; font-size:1.05rem; color:var(--coffee-dark); }
+.ticket-footer-note { text-align:center; font-size:0.75rem; color:var(--coffee-light); padding: 0.75rem 0; }
+
+/* Sales history split */
+.sales-layout { display:flex; gap:1rem; min-height:calc(100vh - 200px); }
+.sales-list-panel { flex:1; min-width:0; }
+.sales-ticket-panel { width:370px; min-width:370px; }
+.no-ticket-placeholder {
+  background: var(--cream-warm);
+  border: 2px dashed var(--soft-gray);
+  border-radius: 12px;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--coffee-light);
+}
+
+/* === PRINT STYLES === */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff !important; }
+  .coffee-navbar { display:none !important; }
+  .page-header { display:none !important; }
+  .sales-list-panel { display:none !important; }
+  .sales-ticket-panel { width:100% !important; min-width:0 !important; }
+  .ticket-viewer { border:none; box-shadow:none; }
+}
+
+/* ── RESPONSIVE TABLES ─────────────────────────────────── */
+/* Todas las tablas dentro de cards tienen scroll horizontal */
+.card .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table           { min-width: 520px; }
+
+/* Excepciones: ticket panels no necesitan min-width */
+.ticket-wrap .table,
+.ticket-viewer .table { min-width: 0; }
+
+/* ── RESPONSIVE BREAKPOINTS ─────────────────────────────── */
+@media (max-width: 991px) {
+  /* POS: apila en columna */
+  .pos-wrapper    { flex-direction: column; height: auto; min-height: calc(100vh - 92px); }
+  .pos-categories {
+    width: 100%; min-width: 0;
+    flex-direction: row;
+    overflow-x: auto; overflow-y: hidden;
+    padding: 0.5rem; gap: 0.4rem;
+  }
+  .pos-category-btn   { min-width: 75px; flex-shrink: 0; }
+  .pos-ticket         { width:100%; min-width:0; border-left:none; border-top:3px solid var(--soft-gray); max-height: 45vh; }
+  .pos-products       { min-height: 280px; }
+  .sales-layout       { flex-direction: column; }
+  .sales-ticket-panel { width:100%; min-width:0; }
+}
+
+@media (max-width: 767px) {
+  /* Reducir padding general */
+  .container      { padding-left: 0.85rem; padding-right: 0.85rem; }
+  .form-card      { padding: 1.25rem 1rem; }
+  .page-header    { padding: 1.1rem 0; }
+  .page-header h1 { font-size: 1.15rem !important; }
+
+  /* Tablas admin: menos padding en celdas */
+  .table th, .table td { padding: 0.6rem 0.5rem; font-size: 0.83rem; }
+
+  /* KPI bar: 2 por fila */
+  .kpi-bar .kpi-card { flex: 1 1 calc(50% - 0.5rem); min-width: 0; }
+
+  /* Sales / historial: panel de ticket pasa abajo */
+  .sales-list-col, .ticket-col { width: 100% !important; max-width: 100% !important; }
+}
+
+@media (max-width: 576px) {
+  /* POS grid: tarjetas más pequeñas */
+  .pos-product-grid   { grid-template-columns: repeat(auto-fill, minmax(95px,1fr)); gap:0.5rem; }
+  .pos-product-icon   { width:48px; height:48px; font-size:1.4rem; }
+  .pos-product-img    { width:56px; height:56px; }
+  .pos-product-name   { font-size: 0.72rem; }
+  .pos-product-from   { font-size: 0.7rem; }
+  .ticket-total       { font-size: 1rem; }
+
+  /* Ticket sidebar: altura limitada en móvil */
+  .pos-ticket         { max-height: 50vh; }
+
+  /* Formularios: botones full-width */
+  .d-flex.gap-3 > .btn-form-save,
+  .d-flex.gap-3 > .btn-form-cancel,
+  .d-flex.gap-3 > .btn-form-update { width: 100%; }
+  .d-flex.justify-content-end.gap-3 { flex-direction: column; }
+}
+
+/* ── POS HEIGHT FIX ─────────────────────────────────────── */
+/* El pos-bar (~36px) está dentro de main, encima del pos-wrapper.
+   Hay que restarlo del calc() para que no haya scroll vertical. */
+.pos-wrapper { height: calc(100vh - 92px); } /* 56px navbar + 36px pos-bar */

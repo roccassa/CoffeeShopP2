@@ -33,8 +33,16 @@ public class ProductService : IProductService
         var json = JsonConvert.SerializeObject(dto);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var res = await _client.PostAsync($"{_baseUrl}{_endpoint}", content);
-        var jsonResponse = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<Response<ProductDto>>(jsonResponse)!;
+        var body = await res.Content.ReadAsStringAsync();
+        try
+        {
+            return JsonConvert.DeserializeObject<Response<ProductDto>>(body)
+                   ?? new Response<ProductDto> { Success = false, Message = "Respuesta vacía de la API." };
+        }
+        catch
+        {
+            return new Response<ProductDto> { Success = false, Message = $"La API devolvió texto inválido: {body[..Math.Min(200, body.Length)]}" };
+        }
     }
 
     public async Task<Response<ProductDto>> UpdateAsync(ProductDto dto)

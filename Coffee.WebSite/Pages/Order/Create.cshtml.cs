@@ -44,14 +44,14 @@ public class CreateModel : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         await LoadCatalogosAsync();
-        // Ajustado a tu propiedad real en inglés
+   
         OrderDto.Status = "Pendiente"; 
         return Page();
     }
 
     private async Task LoadCatalogosAsync()
     {
-        // 1. Consumir las respuestas de la API
+     
         var pRes = await _productService.GetAllAsync();
         ProductsList = pRes.Data ?? new();
 
@@ -64,9 +64,7 @@ public class CreateModel : PageModel
         var payRes = await _paymentService.GetAllAsync();
         PaymentsList = payRes.Data ?? new();
 
-        // 2. CORRECCIÓN CLAVE: Inyectar el nombre del producto directamente en la variante
-        // Si tu ProductVariantDto no tiene un campo para el nombre, usaremos un truco en el bucle
-        VariantsList = variantesOriginales;
+       VariantsList = variantesOriginales;
 
   
         OrderDto.Status = "Pendiente";
@@ -83,7 +81,7 @@ public class CreateModel : PageModel
 
         try
         {
-            // Enviamos la orden directo a la API (la fecha la controlará tu repositorio o API interna)
+            
             var responseOrder = await _orderService.CreateAsync(OrderDto);
 
             if (responseOrder == null || !responseOrder.Success)

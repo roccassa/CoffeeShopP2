@@ -2,237 +2,394 @@
 @model Coffee.WebSite.Pages.Order.ListModel
 
 @{
-    ViewData["Title"] = "Listado de Órdenes";
+    ViewData["Title"] = "Historial de Ventas";
 }
 
 @section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Color crema principal */
-        }
+<style>
+    .main-content { background-color:#fdfbf7; min-height:100vh; padding-bottom:2rem; }
 
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 3rem;
-        }
+    /* Top KPI bar */
+    .kpi-bar { display:flex; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+    .kpi-card {
+        background:white; border-radius:10px; padding:0.85rem 1.2rem;
+        border:1px solid #e9e4dc; flex:1; min-width:130px;
+        box-shadow:0 2px 8px rgba(44,29,17,0.06);
+    }
+    .kpi-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px; color:#8c857b; font-weight:600; }
+    .kpi-value { font-size:1.3rem; font-weight:800; color:#2c1d11; font-family:'Courier New',monospace; }
 
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
-        }
+    /* Table */
+    .sales-table-card { border:none; box-shadow:0 4px 20px rgba(44,29,17,0.08); border-radius:12px; overflow:hidden; }
+    .table thead { background:#2c1d11; color:#f5e8d3; }
+    .table th    { font-weight:600; text-transform:uppercase; font-size:0.78rem; letter-spacing:0.4px; padding:0.8rem 0.75rem; border:none; }
+    .table td    { padding:0.75rem; vertical-align:middle; border-color:#e9e4dc; font-size:0.9rem; }
+    .table-hover tbody tr { cursor:pointer; transition:background 0.15s; }
+    .table-hover tbody tr:hover { background:#f5ece3; }
+    .table-hover tbody tr.selected-row { background:#f0e0cc !important; border-left:3px solid #6f4e37; }
 
-        .card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+    .order-id    { font-weight:800; color:#2c1d11; font-size:1rem; }
+    .total-mono  { font-family:'Courier New',monospace; font-weight:700; font-size:1rem; color:#1e293b; }
+    .form-control { border-color:#e9e4dc; background:#fdfbf7; border-radius:8px; }
+    .form-control:focus { border-color:#6f4e37; box-shadow:0 0 0 0.2rem rgba(111,78,55,0.15); }
 
-        .table thead {
-            background-color: #2c1d11;
-            color: #f5e8d3;
-        }
+    /* Ticket side panel */
+    .ticket-panel-card {
+        background:white; border-radius:12px;
+        border:1px solid #e9e4dc;
+        box-shadow:0 4px 20px rgba(44,29,17,0.08);
+        overflow:hidden; position:sticky; top:70px;
+    }
+    .ticket-panel-head {
+        background:#2c1d11; color:#f5e8d3;
+        padding:0.9rem 1.1rem; text-align:center;
+        font-family:'Courier New',monospace;
+    }
+    .ticket-panel-head h6 { font-weight:800; margin-bottom:0.1rem; font-size:0.95rem; }
+    .ticket-panel-body    { padding:1rem 1.1rem; font-family:'Courier New',monospace; font-size:0.87rem; }
+    .t-row { display:flex; justify-content:space-between; margin-bottom:0.35rem; }
+    .t-row.bold-row { font-weight:800; font-size:0.95rem; }
+    .t-divider { border-top:2px dashed #c8b195; margin:0.65rem 0; }
+    .ticket-panel-actions { border-top:1px solid #e9e4dc; padding:0.85rem 1.1rem; }
 
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 0.75rem;
-        }
+    .no-ticket-ph {
+        text-align:center; padding:2.5rem 1rem;
+        color:#8c857b; font-size:0.85rem;
+    }
 
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
+    .btn-ticket-print {
+        width:100%; background:#2c1d11; color:white; border:none;
+        border-radius:8px; padding:0.65rem; font-weight:700; font-size:0.88rem;
+        transition:all 0.18s;
+    }
+    .btn-ticket-print:hover { background:#6f4e37; color:white; }
+    .btn-ticket-pdf {
+        width:100%; background:#dc2626; color:white; border:none;
+        border-radius:8px; padding:0.65rem; font-weight:700; font-size:0.88rem;
+        margin-top:0.45rem; transition:all 0.18s;
+    }
+    .btn-ticket-pdf:hover { background:#b91c1c; color:white; }
 
-        .btn-success {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            font-weight: 500;
-        }
-
-        .btn-success:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            background-color: #fdfbf7;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .order-id {
-            color: #2c1d11;
-        }
-
-        .total-amount {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 1.05rem;
-        }
-
-        /* Badges estilizados y dinámicos para los estados */
-        .status-badge {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .status-pendiente {
-            background-color: #fef3c7;
-            color: #d97706;
-            border: 1px solid #fcd34d;
-        }
-        .status-completado {
-            background-color: #dcfce7;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
-        .status-cancelado {
-            background-color: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fca5a5;
-        }
-    </style>
+    @@media print {
+        .no-print, .coffee-navbar, .page-header-bar,
+        .search-bar, .kpi-bar, .sales-list-col { display:none !important; }
+        .ticket-col { width:100% !important; }
+        .ticket-panel-card { box-shadow:none; border:none; }
+        body { background:white !important; }
+    }
+</style>
 }
 
 <div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Historial de Órdenes</h1>
-            <p class="lead mb-0">Consulta y gestiona las transacciones comerciales globales y estados de tickets</p>
+    <!-- Header -->
+    <div class="page-header no-print">
+        <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-clock-history me-2"></i>Historial de Ventas</h1>
+                <p class="mb-0 opacity-75 small">Registro de transacciones y tickets del turno</p>
+            </div>
         </div>
     </div>
 
     <div class="container">
-        <form method="get" class="mb-4">
+
+        <!-- KPIs -->
+        <div class="kpi-bar no-print" id="kpiBar">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Órdenes</div>
+                <div class="kpi-value" id="kpiTotal">@Model.Orders.Count</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Ventas Totales</div>
+                <div class="kpi-value">$@Model.Orders.Sum(o => o.Total).ToString("F2")</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Completadas</div>
+                <div class="kpi-value" style="color:#15803d;">@Model.Orders.Count(o => o.Status == "Completado")</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Pendientes</div>
+                <div class="kpi-value" style="color:#d97706;">@Model.Orders.Count(o => o.Status == "Pending" || o.Status == "Pendiente")</div>
+            </div>
+        </div>
+
+        <!-- Search bar -->
+        <form method="get" class="mb-3 no-print search-bar">
             @Html.AntiForgeryToken()
-            <div class="row g-3 align-items-center">
+            <div class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <div class="input-group">
                         <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                               class="form-control" placeholder="Buscar por estado o ID de orden..." />
-                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
-                            <i class="bi bi-search"></i> Buscar
-                        </button>
+                               class="form-control" placeholder="Buscar por ID, cajero, método de pago o estado..." />
+                        <button class="btn btn-coffee"><i class="bi bi-search"></i></button>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <a asp-page="./Create" class="btn btn-success">
-                        <i class="bi bi-receipt-cutoff"></i> Levantar Nueva Orden
+                <div class="col-auto">
+                    <a asp-page="./Create" class="btn btn-coffee">
+                        <i class="bi bi-receipt-cutoff me-1"></i>Nueva Orden
                     </a>
                 </div>
             </div>
         </form>
 
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4" style="width: 10%;">ID</th>
-                            <th style="width: 15%;">Usuario (Cajero)</th>
-                            <th style="width: 15%;">Cliente</th>
-                            <th style="width: 18%;">Método de Pago</th>
-                            <th style="width: 14%;">Total</th>
-                            <th style="width: 13%;">Estado</th>
-                            <th class="text-end pe-4" style="width: 15%;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @if (Model.Orders != null && Model.Orders.Any())
-                    {
-                        @foreach (var order in Model.Orders)
-                        {
-                            // Lógica de CSS según el estado de la orden
-                            string badgeClass = "status-pendiente";
-                            if (order.Status == "Completado") badgeClass = "status-completado";
-                            else if (order.Status == "Cancelado") badgeClass = "status-cancelado";
+        <!-- Split layout -->
+        <div class="row g-3 align-items-start">
 
-                            <tr>
-                                <td class="ps-4 fw-bold order-id">@order.Id</td>
-                                <td class="text-secondary small"><i class="bi bi-person-badge me-1"></i>  @order.UserName</td>
-                                <td class="text-secondary small">
-                                    @if (order.CustomerId.HasValue || order.CustomerId > 0)
-                                    {
-                                        <span><i class="bi bi-person-fill me-1"></i>  @order.CustomerName</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted italic">Público Gral.</span>
-                                    }
-                                </td>
-                                <td class="text-secondary small"><i class="bi bi-credit-card-2-back me-1"></i> @order.PaymentMethodName</td>
-                                <td>
-                                    <span class="total-amount">$@order.Total.ToString("F2")</span>
-                                </td>
-                                <td>
-                                    <span class="status-badge @badgeClass">
-                                        @order.Status
-                                    </span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a asp-page="./Update" asp-route-id="@order.Id" class="btn btn-warning btn-sm me-2">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteOrder(@order.Id)">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
-                                <i class="bi bi-receipt display-6 d-block mb-2 text-muted"></i>
-                                No se encontraron registros de órdenes en la bitácora actual.
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+            <!-- Sales list -->
+            <div class="col-lg-7 sales-list-col">
+                <div class="sales-table-card card">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3" style="width:9%">ID</th>
+                                    <th style="width:20%">Cajero</th>
+                                    <th style="width:18%">Método Pago</th>
+                                    <th style="width:14%">Total</th>
+                                    <th style="width:14%">Estado</th>
+                                    <th class="text-end pe-3 no-print" style="width:15%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.Orders.Any())
+                            {
+                                @foreach (var order in Model.Orders)
+                                {
+                                    string badgeClass = order.Status == "Completado" ? "status-completado"
+                                                      : order.Status == "Cancelado"  ? "status-cancelado"
+                                                      : "status-pendiente";
+                                    <tr onclick="loadTicket(@order.Id)" data-order-id="@order.Id">
+                                        <td class="ps-3"><span class="order-id">@order.Id</span></td>
+                                        <td class="text-secondary small">
+                                            <i class="bi bi-person-badge me-1"></i>@order.UserName
+                                        </td>
+                                        <td class="text-secondary small">
+                                            @{
+                                                var payIcon = (order.PaymentMethodName ?? "").ToLower().Contains("card") ||
+                                                              (order.PaymentMethodName ?? "").ToLower().Contains("tarjeta")
+                                                              ? "bi-credit-card-fill" : "bi-cash-stack";
+                                            }
+                                            <i class="bi @payIcon me-1"></i>@order.PaymentMethodName
+                                        </td>
+                                        <td><span class="total-mono">$@order.Total.ToString("F2")</span></td>
+                                        <td><span class="status-badge @badgeClass">@order.Status</span></td>
+                                        <td class="text-end pe-3 no-print">
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <a href="/OrderDetail/List?orderId=@order.Id"
+                                                   class="btn btn-sm btn-outline-secondary" title="Ver ticket" onclick="event.stopPropagation()">
+                                                    <i class="bi bi-receipt"></i>
+                                                </a>
+                                                <a asp-page="./Update" asp-route-id="@order.Id"
+                                                   class="btn btn-warning btn-sm" title="Editar" onclick="event.stopPropagation()">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteOrder(@order.Id)" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="bi bi-receipt d-block fs-2 mb-2 opacity-50"></i>
+                                        No se encontraron órdenes.
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+
+            <!-- Ticket side panel -->
+            <div class="col-lg-5 ticket-col">
+                <div class="ticket-panel-card" id="ticketSidePanel">
+                    <div class="ticket-panel-head">
+                        <div style="font-size:1.4rem; margin-bottom:0.25rem;">☕</div>
+                        <h6 id="ticketPanelTitle">TICKET DETALLE</h6>
+                        <small id="ticketPanelMeta" class="opacity-75">Selecciona una venta</small>
+                    </div>
+
+                    <!-- Placeholder (no selection) -->
+                    <div class="no-ticket-ph" id="noTicketPh">
+                        <i class="bi bi-hand-index-fill d-block fs-3 mb-2 opacity-40"></i>
+                        Haz clic en una fila<br/>para ver el ticket
+                    </div>
+
+                    <!-- Ticket content (hidden until selection) -->
+                    <div id="ticketContent" style="display:none;">
+                        <div class="ticket-panel-body">
+                            <div id="ticketOrderMeta"></div>
+                            <div class="t-divider"></div>
+                            <div id="ticketLineItems"></div>
+                            <div class="t-divider"></div>
+                            <div id="ticketTotals"></div>
+                        </div>
+                        <div class="ticket-panel-actions no-print">
+                            <button class="btn-ticket-print" onclick="printSideTicket()">
+                                <i class="bi bi-printer-fill me-2"></i>Imprimir Ticket
+                            </button>
+                            <button class="btn-ticket-pdf" onclick="downloadSidePdf()">
+                                <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar PDF
+                            </button>
+                            <a id="ticketFullLink" href="#" class="btn btn-outline-secondary w-100 mt-2 fw-semibold"
+                               style="border-radius:8px; font-size:0.88rem;">
+                                <i class="bi bi-arrow-right-circle me-1"></i>Ver ticket completo
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="ticketLoading" style="display:none; text-align:center; padding:2rem; color:#8c857b;">
+                        <span class="spinner-border spinner-border-sm me-2"></span>Cargando...
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        function deleteOrder(id) {
-            if (!confirm("¿Estás completamente seguro de que deseas eliminar esta orden? Esto eliminará de forma irreversible el registro financiero de la base de datos.")) 
-                return;
-                
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+let _currentOrder = null;
+let _currentDetails = [];
 
-            fetch(`/Order/List?handler=Delete&id=${id}`, {
-                method: 'POST',
-                headers: { 'RequestVerificationToken': token ?? '' }
-            })
-            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(result => {
-                if (result === true || result.success === true || result === "true") {
-                    alert("✅ Orden eliminada de la bitácora");
-                    location.reload();
-                } else {
-                    alert("❌ Error al intentar eliminar la orden");
-                }
-            })
-            .catch(e => alert("Error crítico en la solicitud: " + e.message));
-        }
-    </script>
+async function loadTicket(orderId) {
+    // Highlight row
+    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected-row'));
+    const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+    if (row) row.classList.add('selected-row');
+
+    document.getElementById('noTicketPh').style.display = 'none';
+    document.getElementById('ticketContent').style.display = 'none';
+    document.getElementById('ticketLoading').style.display = '';
+
+    try {
+        const res  = await fetch(`/Order/List?handler=Ticket&orderId=${orderId}`);
+        const data = await res.json();
+        _currentDetails = data;
+
+        // Find order data from rendered table
+        const cell = row?.querySelector('td:nth-child(4)');
+        const totalText = cell?.textContent.replace('$','').trim() || '0';
+        _currentOrder = { id: orderId, total: parseFloat(totalText) };
+
+        renderSideTicket(orderId, data);
+    } catch(e) {
+        document.getElementById('noTicketPh').innerHTML = `<i class="bi bi-exclamation-triangle d-block fs-3 mb-2 text-danger"></i>Error al cargar el ticket`;
+        document.getElementById('noTicketPh').style.display = '';
+    } finally {
+        document.getElementById('ticketLoading').style.display = 'none';
+    }
+}
+
+function renderSideTicket(orderId, details) {
+    const row     = document.querySelector(`tr[data-order-id="${orderId}"]`);
+    const cashier = row?.querySelector('td:nth-child(2)')?.textContent.trim() || '';
+    const payment = row?.querySelector('td:nth-child(3)')?.textContent.trim() || '';
+    const status  = row?.querySelector('td:nth-child(5) span')?.textContent.trim() || '';
+    const now = new Date().toLocaleDateString('es-MX') + ' ' + new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+
+    document.getElementById('ticketPanelTitle').textContent = `TICKET — ORDEN #${orderId}`;
+    document.getElementById('ticketPanelMeta').textContent  = `${cashier} · ${payment}`;
+    document.getElementById('ticketFullLink').href = `/OrderDetail/List?orderId=${orderId}`;
+
+    document.getElementById('ticketOrderMeta').innerHTML = `
+        <div class="t-row"><span>Orden</span><strong>#${orderId}</strong></div>
+        <div class="t-row"><span>Cajero</span><span>${cashier}</span></div>
+        <div class="t-row"><span>Pago</span><span>${payment}</span></div>
+        <div class="t-row"><span>Estado</span><span style="color:${status==='Completado'?'#15803d':'#d97706'}">${status}</span></div>
+        <div class="t-row"><span>Fecha</span><span style="font-size:0.78rem">${now}</span></div>`;
+
+    if (details.length === 0) {
+        document.getElementById('ticketLineItems').innerHTML =
+            `<div class="text-center text-muted" style="padding:0.5rem 0; font-size:0.82rem;">Sin productos registrados</div>`;
+    } else {
+        document.getElementById('ticketLineItems').innerHTML =
+            details.map(d =>
+                `<div class="t-row">
+                    <span>${d.quantity}× ${d.presentationName}</span>
+                    <span>$${d.subtotal.toFixed(2)}</span>
+                </div>`
+            ).join('');
+    }
+
+    const rawTotal = details.reduce((s,d) => s + d.subtotal, 0);
+    const total    = _currentOrder?.total || rawTotal;
+    const subtotal = total / 1.16;
+    const tax      = total - subtotal;
+    document.getElementById('ticketTotals').innerHTML = `
+        <div class="t-row"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+        <div class="t-row"><span>IVA 16%</span><span>$${tax.toFixed(2)}</span></div>
+        <div class="t-row bold-row"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>`;
+
+    document.getElementById('ticketContent').style.display = '';
+}
+
+function printSideTicket() {
+    window.print();
+}
+
+async function downloadSidePdf() {
+    const { jsPDF } = window.jspdf;
+    if (!_currentOrder) return;
+    if (!jsPDF) { alert('Librería PDF no disponible. Use Imprimir → Guardar como PDF.'); return; }
+
+    const orderId  = _currentOrder.id;
+    const total    = _currentOrder.total;
+    const subtotal = total / 1.16;
+    const tax      = total - subtotal;
+    const details  = _currentDetails;
+    const now = new Date().toLocaleString('es-MX');
+
+    const doc = new jsPDF({ unit:'mm', format:[80,160], orientation:'portrait' });
+    let y = 8;
+    doc.setFontSize(11); doc.setFont('courier','bold');
+    doc.text('CAFETERÍA CONTROL', 40, y, {align:'center'}); y += 5;
+    doc.setFontSize(7); doc.setFont('courier','normal');
+    doc.text('Sistema de Punto de Venta', 40, y, {align:'center'}); y += 4;
+    doc.text(now, 40, y, {align:'center'}); y += 5;
+    doc.setLineDashPattern([1,1],0);
+    doc.line(2, y, 78, y); y += 4;
+    doc.setFontSize(8); doc.setFont('courier','bold');
+    doc.text(`Orden #${orderId}`, 2, y); y += 5;
+    doc.setFont('courier','normal');
+
+    details.forEach(d => {
+        doc.text(`${d.quantity}x ${d.presentationName}`, 2, y);
+        doc.text(`$${d.subtotal.toFixed(2)}`, 78, y, {align:'right'}); y += 4.5;
+    });
+
+    doc.line(2, y, 78, y); y += 4;
+    doc.text('Subtotal', 2, y); doc.text(`$${subtotal.toFixed(2)}`, 78, y, {align:'right'}); y += 4;
+    doc.text('IVA 16%',  2, y); doc.text(`$${tax.toFixed(2)}`,      78, y, {align:'right'}); y += 5;
+    doc.setFontSize(10); doc.setFont('courier','bold');
+    doc.text('TOTAL', 2, y); doc.text(`$${total.toFixed(2)}`, 78, y, {align:'right'}); y += 6;
+    doc.setFontSize(7); doc.setFont('courier','normal');
+    doc.text('¡Gracias por su preferencia!', 40, y, {align:'center'});
+
+    doc.save(`Ticket-Orden-${orderId}.pdf`);
+}
+
+function deleteOrder(id) {
+    if (!confirm('¿Eliminar esta orden? Esta acción es irreversible.')) return;
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch(`/Order/List?handler=Delete&id=${id}`, {
+        method:'POST',
+        headers:{ 'RequestVerificationToken': token ?? '' }
+    })
+    .then(r => { if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(ok => {
+        if (ok === true || ok?.success === true || ok === 'true') location.reload();
+        else alert('Error al eliminar la orden.');
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+</script>
 }

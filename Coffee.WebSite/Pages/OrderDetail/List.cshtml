@@ -2,218 +2,425 @@
 @model Coffee.WebSite.Pages.OrderDetail.ListModel
 
 @{
-    ViewData["Title"] = "Detalles de Órdenes";
+    ViewData["Title"] = Model.OrderId > 0 ? $"Ticket — Orden #{Model.OrderId}" : "Desglose de Órdenes";
+    bool showingTicket = Model.OrderId > 0;
+
+    decimal subtotal  = Model.OrderDetails.Sum(d => d.Quantity * d.UnitPrice);
+    decimal tax       = subtotal * 0.16m;
+    decimal total     = subtotal + tax;
+    // If order has its own total, use it; otherwise use calculated
+    if (Model.CurrentOrder != null && Model.CurrentOrder.Total > 0)
+    {
+        total    = Model.CurrentOrder.Total;
+        tax      = total - (total / 1.16m);
+        subtotal = total - tax;
+    }
+
+    string dateStr = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 }
 
 @section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Crema principal */
-        }
+<style>
+    .main-content { background-color: #fdfbf7; min-height: 100vh; padding-bottom: 3rem; }
+    .page-header  { background: linear-gradient(135deg, #2c1d11, #6f4e37); color:white; padding:1.4rem 0; margin-bottom:1.5rem; }
 
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 3rem;
-        }
+    /* Table panel */
+    .card { border:none; box-shadow:0 4px 20px rgba(44,29,17,0.08); border-radius:12px; overflow:hidden; }
+    .table thead { background:#2c1d11; color:#f5e8d3; }
+    .table th    { font-weight:600; text-transform:uppercase; font-size:0.78rem; letter-spacing:0.4px; padding:0.85rem 0.75rem; border:none; }
+    .table td    { padding:0.8rem 0.75rem; vertical-align:middle; border-color:#e9e4dc; }
+    .table-hover tbody tr:hover { background:#f5ece3; }
 
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
-        }
+    .ticket-badge  { background:#f5e8d3; color:#2c1d11; border:1px solid #c8b195; padding:0.3rem 0.65rem; border-radius:5px; font-weight:600; font-size:0.82rem; }
+    .price-text    { font-family:'Courier New',monospace; font-weight:600; color:#475569; }
+    .subtotal-text { font-family:'Courier New',monospace; font-weight:700; color:#1e293b; font-size:1rem; }
 
-        .card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+    .form-control { border-color:#e9e4dc; background:#fdfbf7; border-radius:8px; }
+    .form-control:focus { border-color:#6f4e37; box-shadow:0 0 0 0.2rem rgba(111,78,55,0.15); background:#fff; }
 
-        .table thead {
-            background-color: #2c1d11;
-            color: #f5e8d3;
-        }
+    /* === TICKET PANEL === */
+    .ticket-wrap {
+        background: white;
+        border: 1px solid #e9e4dc;
+        border-radius: 12px;
+        overflow: hidden;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 20px rgba(44,29,17,0.08);
+    }
+    .ticket-head {
+        background: #2c1d11;
+        color: #f5e8d3;
+        padding: 1.2rem 1.4rem;
+        text-align: center;
+    }
+    .ticket-head h5    { font-weight: 800; margin-bottom: 0.15rem; font-size: 1.05rem; }
+    .ticket-head small { opacity: 0.75; font-size: 0.78rem; }
+    .ticket-body       { padding: 1.1rem 1.4rem; }
+    .t-divider         { border-top: 2px dashed #c8b195; margin: 0.8rem 0; }
+    .t-row             { display:flex; justify-content:space-between; margin-bottom:0.4rem; font-size:0.88rem; }
+    .t-row.total-row   { font-weight:800; font-size:1rem; margin-top:0.5rem; }
+    .t-row.tax-row     { font-size:0.82rem; color:#6f4e37; }
+    .t-footer          { text-align:center; padding:0.75rem 1.4rem 1.1rem; font-size:0.76rem; color:#8c857b; }
 
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 0.75rem;
-        }
+    /* Print action buttons */
+    .action-card {
+        background: white;
+        border: 1px solid #e9e4dc;
+        border-radius: 12px;
+        padding: 1.1rem;
+    }
+    .btn-print-ticket {
+        background: #2c1d11;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        width: 100%;
+        transition: all 0.2s;
+    }
+    .btn-print-ticket:hover { background: #6f4e37; color: white; }
+    .btn-pdf {
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        width: 100%;
+        margin-top: 0.5rem;
+        transition: all 0.2s;
+    }
+    .btn-pdf:hover { background: #b91c1c; color: white; }
 
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        .btn-success {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            font-weight: 500;
-        }
-
-        .btn-success:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            background-color: #fdfbf7;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .ticket-badge {
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            border: 1px solid #c8b195;
-            padding: 0.35rem 0.7rem;
-            border-radius: 6px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .price-text {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .subtotal-text {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 1.05rem;
-        }
-    </style>
+    /* Print only */
+    @@media print {
+        .no-print            { display:none !important; }
+        .coffee-navbar       { display:none !important; }
+        .page-header         { display:none !important; }
+        .left-panel          { display:none !important; }
+        .right-panel         { width:100% !important; }
+        .ticket-wrap         { box-shadow:none; border:none; }
+        .ticket-action-panel { display:none !important; }
+        body                 { background:#fff !important; }
+        .main-content        { padding:0 !important; }
+    }
+</style>
 }
 
 <div class="main-content">
-    <div class="page-header text-center">
+    <div class="page-header no-print">
         <div class="container">
-            <h1 class="display-5 fw-bold">Desglose de Conceptos</h1>
-            <p class="lead mb-0">Audita las líneas de productos, cantidades y precios unitarios asociados a cada ticket</p>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <h1 class="fw-bold mb-0 fs-4">
+                        @if (showingTicket)
+                        {
+                            <i class="bi bi-receipt-cutoff me-2"></i>@:Ticket — Orden #@Model.OrderId
+                        }
+                        else
+                        {
+                            <i class="bi bi-list-ul me-2"></i>@:Desglose de Órdenes
+                        }
+                    </h1>
+                    <p class="mb-0 opacity-75 small">
+                        @if (showingTicket && Model.CurrentOrder != null)
+                        {
+                            @:@Model.CurrentOrder.UserName · @Model.CurrentOrder.PaymentMethodName · $@Model.CurrentOrder.Total.ToString("F2")
+                        }
+                        else
+                        {
+                            @:Audita líneas de productos y precios por ticket
+                        }
+                    </p>
+                </div>
+                @if (showingTicket)
+                {
+                    <a href="/OrderDetail/List" class="btn btn-outline-light btn-sm no-print">
+                        <i class="bi bi-arrow-left me-1"></i>Ver todos
+                    </a>
+                }
+            </div>
         </div>
     </div>
 
     <div class="container">
-        <form method="get" class="mb-4">
-            @Html.AntiForgeryToken()
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                               class="form-control" placeholder="Buscar por ID de desglose u Orden ID..." />
-                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
-                            <i class="bi bi-search"></i> Buscar
-                        </button>
+
+        @if (showingTicket)
+        {
+            <!-- ===== TICKET VIEW (Scene 8) ===== -->
+            <div class="row g-3 align-items-start">
+
+                <!-- Left: line items table -->
+                <div class="col-lg-7 left-panel no-print">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-3">Producto</th>
+                                        <th style="width:10%">Cant.</th>
+                                        <th style="width:15%">P. Unit.</th>
+                                        <th style="width:15%">Subtotal</th>
+                                        <th class="text-end pe-3" style="width:15%">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @if (Model.OrderDetails.Any())
+                                {
+                                    @foreach (var d in Model.OrderDetails)
+                                    {
+                                        <tr>
+                                            <td class="ps-3 fw-semibold">@d.PresentationName</td>
+                                            <td class="fw-bold">@d.Quantity</td>
+                                            <td><span class="price-text">$@d.UnitPrice.ToString("F2")</span></td>
+                                            <td><span class="subtotal-text">$@((d.Quantity * d.UnitPrice).ToString("F2"))</span></td>
+                                            <td class="text-end pe-3">
+                                                <button class="btn btn-danger btn-sm" onclick="deleteDetail(@d.Id)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox d-block fs-3 mb-2 opacity-50"></i>
+                                            Sin productos en esta orden.
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <a asp-page="./Create" class="btn btn-success">
-                        <i class="bi bi-plus-circle"></i> Agregar Concepto Manual
-                    </a>
+
+                <!-- Right: Ticket + Print/PDF -->
+                <div class="col-lg-5 right-panel">
+                    <!-- Ticket -->
+                    <div class="ticket-wrap" id="ticketPrintArea">
+                        <div class="ticket-head">
+                            <div style="font-size:1.6rem; margin-bottom:0.3rem;">☕</div>
+                            <h5>CAFETERÍA CONTROL</h5>
+                            <small>Sistema de Punto de Venta</small><br/>
+                            <small>@dateStr</small>
+                        </div>
+                        <div class="ticket-body">
+                            <div class="t-row"><span>Orden #</span><strong>@Model.OrderId</strong></div>
+                            @if (Model.CurrentOrder != null)
+                            {
+                                <div class="t-row"><span>Cajero</span><span>@Model.CurrentOrder.UserName</span></div>
+                                <div class="t-row"><span>Pago</span><span>@Model.CurrentOrder.PaymentMethodName</span></div>
+                                <div class="t-row"><span>Estado</span>
+                                    <span style="color:@(Model.CurrentOrder.Status=="Completado"?"#15803d":"#d97706")">
+                                        @Model.CurrentOrder.Status
+                                    </span>
+                                </div>
+                            }
+                            <div class="t-divider"></div>
+                            @foreach (var d in Model.OrderDetails)
+                            {
+                                <div class="t-row">
+                                    <span>@d.Quantity × @d.PresentationName</span>
+                                    <span>$@((d.Quantity * d.UnitPrice).ToString("F2"))</span>
+                                </div>
+                            }
+                            <div class="t-divider"></div>
+                            <div class="t-row tax-row"><span>Subtotal</span><span>$@subtotal.ToString("F2")</span></div>
+                            <div class="t-row tax-row"><span>IVA (16%)</span><span>$@tax.ToString("F2")</span></div>
+                            <div class="t-row total-row"><span>TOTAL</span><span>$@total.ToString("F2")</span></div>
+                        </div>
+                        <div class="t-footer">
+                            ¡Gracias por su preferencia! 🙏<br/>
+                            Vuelva pronto · Cafetería Control
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="action-card mt-3 ticket-action-panel no-print">
+                        <button class="btn-print-ticket" onclick="printTicket()">
+                            <i class="bi bi-printer-fill me-2"></i>Imprimir Ticket
+                        </button>
+                        <button class="btn-pdf" onclick="downloadPdf()">
+                            <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar PDF
+                        </button>
+                        <a href="/Order/List" class="btn btn-outline-secondary w-100 mt-2 fw-semibold" style="border-radius:8px;">
+                            <i class="bi bi-arrow-left me-1"></i>Volver al Historial
+                        </a>
+                    </div>
                 </div>
             </div>
-        </form>
+        }
+        else
+        {
+            <!-- ===== LIST VIEW (all details) ===== -->
+            <form method="get" class="mb-4 no-print">
+                @Html.AntiForgeryToken()
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                                   class="form-control" placeholder="Buscar por ID, Orden o Producto..." />
+                            <button class="btn btn-coffee">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <a asp-page="./Create" class="btn btn-coffee">
+                            <i class="bi bi-plus-circle me-1"></i>Agregar Concepto
+                        </a>
+                    </div>
+                </div>
+            </form>
 
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4" style="width: 12%;">ID Línea</th>
-                            <th style="width: 18%;">Orden (Ticket)</th>
-                            <th style="width: 18%;">Presentación ID</th>
-                            <th style="width: 14%;">Cantidad</th>
-                            <th style="width: 18%;">Precio Unitario</th>
-                            <th style="width: 15%;">Subtotal</th>
-                            <th class="text-end pe-4" style="width: 15%;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
-                    {
-                        @foreach (var detail in Model.OrderDetails)
-                        {
-                            decimal subtotal = detail.Quantity * detail.UnitPrice;
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
                             <tr>
-                                <td class="ps-4 fw-bold text-muted">@detail.Id</td>
-                                <td>
-                                    <span class="ticket-badge">
-                                        <i class="bi bi-receipt me-1"></i> Orden @detail.OrderId
-                                    </span>
-                                </td>
-                                <td class="text-secondary small">
-                                    <i class="bi bi-box-seam me-1"></i> @detail.PresentationName
-                                </td>
-                                <td class="fw-bold text-dark">
-                                    @detail.Quantity <span class="text-muted font-weight-normal small">pzas</span>
-                                </td>
-                                <td>
-                                    <span class="price-text">$@detail.UnitPrice.ToString("F2")</span>
-                                </td>
-                                <td>
-                                    <span class="subtotal-text">$@subtotal.ToString("F2")</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a asp-page="./Update" asp-route-id="@detail.Id" class="btn btn-warning btn-sm me-2">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteDetail(@detail.Id)">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
+                                <th class="ps-4" style="width:10%">ID</th>
+                                <th style="width:18%">Orden (Ticket)</th>
+                                <th style="width:22%">Producto / Presentación</th>
+                                <th style="width:12%">Cant.</th>
+                                <th style="width:16%">P. Unitario</th>
+                                <th style="width:14%">Subtotal</th>
+                                <th class="text-end pe-4" style="width:8%">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                        {
+                            @foreach (var detail in Model.OrderDetails)
+                            {
+                                decimal sub = detail.Quantity * detail.UnitPrice;
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">@detail.Id</td>
+                                    <td>
+                                        <a href="/OrderDetail/List?orderId=@detail.OrderId"
+                                           class="ticket-badge text-decoration-none">
+                                            <i class="bi bi-receipt me-1"></i>#@detail.OrderId
+                                        </a>
+                                    </td>
+                                    <td class="text-secondary small fw-semibold">@detail.PresentationName</td>
+                                    <td class="fw-bold">@detail.Quantity</td>
+                                    <td><span class="price-text">$@detail.UnitPrice.ToString("F2")</span></td>
+                                    <td><span class="subtotal-text">$@sub.ToString("F2")</span></td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex gap-1 justify-content-end">
+                                            <a href="/OrderDetail/List?orderId=@detail.OrderId"
+                                               class="btn btn-sm btn-outline-secondary" title="Ver ticket">
+                                                <i class="bi bi-receipt"></i>
+                                            </a>
+                                            <a asp-page="./Update" asp-route-id="@detail.Id"
+                                               class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteDetail(@detail.Id)" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-list-task d-block fs-2 mb-2 opacity-50"></i>
+                                    No se encontraron conceptos.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
-                                <i class="bi bi-list-task display-6 d-block mb-2 text-muted"></i>
-                                No se encontraron conceptos o líneas desglosadas en esta consulta.
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        function deleteDetail(id) {
-            if (!confirm("¿Estás completamente seguro de que deseas eliminar esta línea de detalle? Esto modificará de forma colateral el cálculo del total general de la orden.")) 
-                return;
+<script>
+function deleteDetail(id) {
+    if (!confirm('¿Eliminar esta línea del ticket? Esta acción modifica el total de la orden.')) return;
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch(`/OrderDetail/List?handler=Delete&id=${id}`, {
+        method: 'POST',
+        headers: { 'RequestVerificationToken': token ?? '' }
+    })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(ok => {
+        if (ok === true || ok?.success === true || ok === 'true') { location.reload(); }
+        else alert('Error al eliminar la línea.');
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
 
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-            
-            fetch(`/OrderDetail/List?handler=Delete&id=${id}`, {
-                method: 'POST',
-                headers: { 'RequestVerificationToken': token ?? '' }
-            })
-            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(result => {
-                if (result === true || result.success === true || result === "true") {
-                    alert("✅ Concepto removido correctamente");
-                    location.reload();
-                } else {
-                    alert("❌ Error al intentar remover el concepto");
-                }
-            })
-            .catch(e => alert("Error crítico de comunicación: " + e.message));
-        }
-    </script>
+function printTicket() {
+    window.print();
+}
+
+async function downloadPdf() {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) { alert('Librería PDF no disponible. Use Imprimir → Guardar como PDF.'); return; }
+
+    const doc = new jsPDF({ unit: 'mm', format: [80, 160], orientation: 'portrait' });
+    const orderId  = '@Model.OrderId';
+    const dateStr  = '@dateStr';
+    const details  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        Model.OrderDetails.Select(d => new {
+            name  = d.PresentationName ?? "",
+            qty   = d.Quantity,
+            price = d.UnitPrice,
+            sub   = d.Quantity * d.UnitPrice
+        })
+    ));
+    const subtotal = @subtotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+    const tax      = @tax.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+    const total    = @total.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+
+    let y = 8;
+    doc.setFontSize(11); doc.setFont('courier','bold');
+    doc.text('CAFETERÍA CONTROL', 40, y, { align:'center' }); y += 5;
+    doc.setFontSize(7); doc.setFont('courier','normal');
+    doc.text('Sistema de Punto de Venta', 40, y, { align:'center' }); y += 4;
+    doc.text(dateStr, 40, y, { align:'center' }); y += 5;
+
+    doc.setLineDashPattern([1,1], 0);
+    doc.line(2, y, 78, y); y += 4;
+
+    doc.setFontSize(8); doc.setFont('courier','bold');
+    doc.text(`Orden #${orderId}`, 2, y); y += 5;
+    doc.setFont('courier','normal');
+
+    details.forEach(d => {
+        const line = `${d.qty}x ${d.name}`;
+        const price = `$${d.sub.toFixed(2)}`;
+        doc.text(line, 2, y);
+        doc.text(price, 78, y, { align:'right' });
+        y += 4.5;
+    });
+
+    doc.line(2, y, 78, y); y += 4;
+    doc.text('Subtotal', 2, y); doc.text(`$${subtotal}`, 78, y, { align:'right' }); y += 4;
+    doc.text('IVA 16%',  2, y); doc.text(`$${tax}`,      78, y, { align:'right' }); y += 5;
+    doc.setFontSize(10); doc.setFont('courier','bold');
+    doc.text('TOTAL', 2, y); doc.text(`$${total}`, 78, y, { align:'right' }); y += 6;
+
+    doc.setFontSize(7); doc.setFont('courier','normal');
+    doc.text('¡Gracias por su preferencia!', 40, y, { align:'center' }); y += 4;
+    doc.text('Vuelva pronto', 40, y, { align:'center' });
+
+    doc.save(`Ticket-Orden-${orderId}.pdf`);
+}
+</script>
+<!-- jsPDF for PDF download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 }

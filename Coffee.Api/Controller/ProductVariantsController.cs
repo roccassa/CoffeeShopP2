@@ -24,10 +24,11 @@ public class ProductVariantsController : ControllerBase
         {
             Data = variants.Select(v => new ProductVariantDto
             {
-                Id = v.Id,
+                Id          = v.Id,
+                ProductId   = v.ProductId,
                 ProductName = v.ProductName,
-                Size = v.Size,
-                Price = v.Price
+                Size        = v.Size,
+                Price       = v.Price
             }).ToList()
         };
         return Ok(response);

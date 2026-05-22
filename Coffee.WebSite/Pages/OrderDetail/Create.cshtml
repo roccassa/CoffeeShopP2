@@ -1,177 +1,128 @@
 @page
 @model Coffee.WebSite.Pages.OrderDetail.CreateModel
 @{
-    ViewData["Title"] = "Agregar Detalle de Orden";
+    ViewData["Title"] = "Agregar Concepto a Orden";
+    var variantsJson = System.Text.Json.JsonSerializer.Serialize(
+        Model.Variants.Select(v => new { id = v.Id, price = v.Price }));
 }
 
-@section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important;
-        }
-
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 4rem;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2.5rem;
-        }
-
-        .card-custom {
-            border: none;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.06);
-            padding: 2.5rem;
-        }
-
-        .form-label {
-            color: #2c1d11;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .input-group-text {
-            background-color: #fdfbf7;
-            border-color: #e9e4dc;
-            color: #6f4e37;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            padding: 0.65rem 0.75rem;
-            background-color: #fdfbf7;
-            font-size: 0.95rem;
-            border-radius: 8px;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        .btn-coffee-save {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            color: white;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-save:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-            color: white;
-        }
-
-        .btn-coffee-cancel {
-            background-color: transparent;
-            border: 1px solid #c8b195;
-            color: #6f4e37;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-cancel:hover {
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            border-color: #6f4e37;
-        }
-
-        .alert-custom {
-            background-color: #fdf2f2;
-            border: 1px solid #fbd5d5;
-            color: #9b1c1c;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-    </style>
-}
-
-<div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Vincular Nuevo Concepto</h1>
-            <p class="lead mb-0">Inserta manualmente un producto y su costo a un ticket de venta activo</p>
-        </div>
-    </div>
-
+<div class="page-header">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
+        <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-plus-circle me-2"></i>Agregar Concepto a Orden</h1>
+        <p class="mb-0 opacity-75 small">Vincula manualmente un producto a un ticket de venta activo</p>
+    </div>
+</div>
 
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="alert alert-custom alert-dismissible fade show d-flex align-items-center mb-4 p-3" role="alert">
-                        <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
-                        <div>@Model.ErrorMessage</div>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
+<div class="container" style="padding-bottom:3rem;">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
 
-                <div class="card card-custom">
-                    <form method="post" autocomplete="off">
-                        
-                        <div class="mb-3">
-                            <label asp-for="OrderDetailDto.OrderId" class="form-label">ID de la Orden Principal</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-receipt"></i></span>
-                                <input asp-for="OrderDetailDto.OrderId" class="form-control" type="number" placeholder="Ingresa el ID de la orden contenedora" required autofocus />
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="OrderDetailDto.ProductVariantId" class="form-label">ID de la Presentación de Producto</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-box-seam-fill"></i></span>
-                                <input asp-for="OrderDetailDto.ProductVariantId" class="form-control" type="number" placeholder="Ingresa el ID de la variante física" required />
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="OrderDetailDto.Quantity" class="form-label">Cantidad Comprada</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-calculator"></i></span>
-                                <input asp-for="OrderDetailDto.Quantity" class="form-control" type="number" placeholder="Cantidad de unidades" required min="1" />
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="OrderDetailDto.UnitPrice" class="form-label">Precio Unitario ($)</label>
-                            <div class="input-group">
-                                <span class="input-group-text fw-bold">$</span>
-                                <input asp-for="OrderDetailDto.UnitPrice" class="form-control" type="number" step="0.01" placeholder="0.00" required min="0" />
-                            </div>
-                        </div>
-
-                        <hr class="text-muted my-4" />
-
-                        <div class="d-flex justify-content-end gap-3">
-                            <a asp-page="./List" class="btn btn-coffee-cancel">
-                                <i class="bi bi-x-circle me-1"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-coffee-save">
-                                <i class="bi bi-check-circle me-1"></i> Insertar Concepto
-                            </button>
-                        </div>
-
-                    </form>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert-form-error d-flex align-items-center gap-2 p-3 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <span>@Model.ErrorMessage</span>
                 </div>
+            }
 
+            <div class="form-card">
+                <form method="post" autocomplete="off">
+
+                    <!-- Orden (dropdown) -->
+                    <div class="mb-3">
+                        <label class="form-label">Orden (Ticket)</label>
+                        <select asp-for="OrderDetailDto.OrderId" class="form-select" required>
+                            <option value="">— Selecciona una orden —</option>
+                            @foreach (var o in Model.Orders)
+                            {
+                                <option value="@o.Id">
+                                    #@o.Id — @o.UserName · @o.Status · $@o.Total.ToString("F2")
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="OrderDetailDto.OrderId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Presentación (dropdown) con auto-fill de precio -->
+                    <div class="mb-3">
+                        <label class="form-label">Producto / Presentación</label>
+                        <select asp-for="OrderDetailDto.ProductVariantId" class="form-select" required
+                                onchange="fillPrice(this.value)">
+                            <option value="">— Selecciona un producto —</option>
+                            @foreach (var v in Model.Variants)
+                            {
+                                <option value="@v.Id">
+                                    @v.ProductName — @v.Size ($@v.Price.ToString("F2"))
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="OrderDetailDto.ProductVariantId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div class="mb-3">
+                        <label class="form-label">Cantidad</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calculator"></i></span>
+                            <input asp-for="OrderDetailDto.Quantity" class="form-control"
+                                   type="number" min="1" placeholder="1" required
+                                   oninput="updateSubtotal()" />
+                        </div>
+                        <span asp-validation-for="OrderDetailDto.Quantity" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Precio unitario (auto-filled) -->
+                    <div class="mb-3">
+                        <label class="form-label">Precio Unitario</label>
+                        <div class="input-group">
+                            <span class="input-group-text fw-bold">$</span>
+                            <input asp-for="OrderDetailDto.UnitPrice" class="form-control"
+                                   type="number" step="0.01" min="0" placeholder="0.00" required
+                                   id="unitPrice" oninput="updateSubtotal()" />
+                        </div>
+                        <span asp-validation-for="OrderDetailDto.UnitPrice" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Subtotal preview -->
+                    <div class="mb-4 p-3 rounded d-flex justify-content-between fw-bold"
+                         style="background:var(--cream-warm); font-family:'Courier New',monospace;">
+                        <span>Subtotal estimado:</span>
+                        <span id="subtotalPreview">$0.00</span>
+                    </div>
+
+                    <hr class="my-3" />
+                    <div class="d-flex justify-content-end gap-3">
+                        <a asp-page="./List" class="btn-form-cancel btn">
+                            <i class="bi bi-x-circle me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn-form-save btn">
+                            <i class="bi bi-check-circle me-1"></i>Insertar Concepto
+                        </button>
+                    </div>
+                </form>
             </div>
+
         </div>
     </div>
 </div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+const VARIANT_PRICES = @Html.Raw(variantsJson);
+
+function fillPrice(variantId) {
+    const v = VARIANT_PRICES.find(x => x.id == variantId);
+    if (v) {
+        document.getElementById('unitPrice').value = v.price.toFixed(2);
+        updateSubtotal();
+    }
+}
+
+function updateSubtotal() {
+    const price = parseFloat(document.getElementById('unitPrice').value) || 0;
+    const qty   = parseFloat(document.querySelector('[name="OrderDetailDto.Quantity"]').value) || 0;
+    document.getElementById('subtotalPreview').textContent = '$' + (price * qty).toFixed(2);
+}
+</script>
+}

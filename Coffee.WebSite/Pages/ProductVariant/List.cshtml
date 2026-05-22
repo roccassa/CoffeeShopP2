@@ -1,209 +1,112 @@
 @page
 @model Coffee.WebSite.Pages.ProductVariant.ListModel
-
 @{
-    ViewData["Title"] = "Listado de Presentaciones";
+    ViewData["Title"] = "Presentaciones de Producto";
 }
 
-@section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important; /* Color crema principal */
-        }
-
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 3rem;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .table thead {
-            background-color: #2c1d11;
-            color: #f5e8d3;
-        }
-
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 0.75rem;
-        }
-
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        .btn-success {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            font-weight: 500;
-        }
-
-        .btn-success:hover {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-        }
-
-        .form-control {
-            border-color: #e9e4dc;
-            background-color: #fdfbf7;
-        }
-
-        .form-control:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
-
-        /* Estilo para los tamaños del producto (Chico, Mediano, Grande, etc) */
-        .size-badge {
-            font-size: 0.85rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            border: 1px solid #c8b195;
-            display: inline-block;
-        }
-
-        /* Destacar precios de la cafetería */
-        .price-text {
-            color: #6f4e37;
-            font-size: 1.05rem;
-        }
-    </style>
-}
-
-<div class="main-content">
-    <div class="page-header text-center">
-        <div class="container">
-            <h1 class="display-5 fw-bold">Presentaciones de Producto</h1>
-            <p class="lead mb-0">Gestiona los tamaños, porciones y precios de venta al público</p>
+<div class="page-header">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+            <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-tags-fill me-2"></i>Presentaciones de Producto</h1>
+            <p class="mb-0 opacity-75 small">Gestiona los tamaños y precios de venta al público</p>
         </div>
-    </div>
-
-    <div class="container">
-        <form method="get" class="mb-4">
-            @Html.AntiForgeryToken()
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
-                               class="form-control" 
-                               placeholder="Buscar por tamaño o ID de presentación..." />
-                        <button class="btn btn-primary" style="background-color:#2c1d11; border:none;">
-                            <i class="bi bi-search"></i> Buscar
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <a asp-page="./Create" class="btn btn-success">
-                        <i class="bi bi-plus-lg"></i> Agregar Nueva Presentación
-                    </a>
-                </div>
-            </div>
-        </form>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4" style="width: 12%;">ID</th>
-                            <th style="width: 18%;">ID Producto</th>
-                            <th style="width: 30%;">Tamaño / Porción</th>
-                            <th style="width: 20%;">Precio de Venta</th>
-                            <th class="text-end pe-4" style="width: 20%;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @if (Model.ProductVariants != null && Model.ProductVariants.Any())
-                    {
-                        @foreach (var variant in Model.ProductVariants)
-                        {
-                            <tr>
-                                <td class="ps-4 fw-bold text-muted">@variant.Id</td>
-                                <td>
-                                    <span class="badge bg-dark px-2.5 py-1.5">
-                                        <i class="bi bi-box-seam me-1"></i> @variant.ProductName
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="size-badge fw-bold">
-                                        <i class="bi bi-arrows-angle-expand me-1"></i> @variant.Size
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="price-text fw-bold">
-                                        $@variant.Price.ToString("F2")
-                                    </span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a asp-page="./Update" asp-route-id="@variant.Id" class="btn btn-warning btn-sm me-2">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteVariant(@variant.Id)">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-5">
-                                <i class="bi bi-tags display-6 d-block mb-2 text-muted"></i>
-                                No se encontraron tamaños ni presentaciones registradas.
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <a asp-page="./Create" class="btn-form-save btn">
+            <i class="bi bi-plus-circle me-1"></i>Nueva Presentación
+        </a>
     </div>
 </div>
 
+<div class="container" style="padding-bottom:3rem;">
+
+    <!-- Search -->
+    <form method="get" class="mb-4">
+        <div class="input-group" style="max-width:420px;">
+            <span class="input-group-text" style="background:var(--cream-warm); border-color:var(--soft-gray);">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                   class="form-control" placeholder="Buscar por producto o tamaño…"
+                   style="border-color:var(--soft-gray); background:var(--cream);" />
+            <button class="btn" style="background:var(--coffee-dark); color:#fff; border:none;">Buscar</button>
+        </div>
+    </form>
+
+    @if (Model.ProductVariants.Any())
+    {
+        <div class="form-card p-0" style="overflow:hidden;">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Producto</th>
+                        <th>Tamaño / Porción</th>
+                        <th>Precio de Venta</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model.ProductVariants)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <span class="fw-semibold" style="color:var(--coffee-dark);">@v.ProductName</span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      style="background:var(--cream-warm);color:var(--coffee-dark);
+                                             border:1px solid var(--soft-gray);font-size:0.85rem;padding:0.4rem 0.8rem;">
+                                    <i class="bi bi-arrows-angle-expand me-1"></i>@v.Size
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold font-monospace" style="color:var(--coffee-medium); font-size:1rem;">
+                                    $@v.Price.ToString("F2")
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-page="./Update" asp-route-id="@v.Id"
+                                   class="btn btn-sm me-1"
+                                   style="background:var(--cream-warm);border:1px solid var(--soft-gray);color:var(--coffee-dark);">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger"
+                                        onclick="deleteVariant(@v.Id, '@v.ProductName?.Replace("'","\\'") — @v.Size')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-tags display-4 d-block mb-3 opacity-50"></i>
+            <p class="fw-semibold">No hay presentaciones registradas aún.</p>
+            <a asp-page="./Create" class="btn-form-save btn mt-2">
+                <i class="bi bi-plus-circle me-1"></i>Agregar primera presentación
+            </a>
+        </div>
+    }
+</div>
+
 @section Scripts {
-    <script>
-        function deleteVariant(id) {
-            if (!confirm("¿Estás seguro de que deseas eliminar esta presentación comercial?")) 
-                return;
+<script>
+function deleteVariant(id, label) {
+    if (!confirm(`¿Eliminar la presentación "${label}"?`)) return;
 
-            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
-            fetch(`/ProductVariant/List?handler=Delete&id=${id}`, {
-                method: 'POST',
-                headers: { 'RequestVerificationToken': token ?? '' }
-            })
-            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(result => {
-                if (result === true || result.success === true || result === "true") {
-                    alert("✅ Presentación eliminada correctamente");
-                    location.reload();
-                } else {
-                    alert("❌ Error al eliminar la presentación");
-                }
-            })
-            .catch(e => alert("Error crítico al procesar la solicitud: " + e.message));
-        }
-    </script>
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch(`/ProductVariant/List?handler=Delete&id=${id}`, {
+        method: 'POST',
+        headers: { 'RequestVerificationToken': token ?? '' }
+    })
+    .then(r => r.json())
+    .then(ok => {
+        if (ok === true || ok?.success === true) location.reload();
+        else alert('Error al eliminar la presentación.');
+    })
+    .catch(e => alert('Error: ' + e.message));
+}
+</script>
 }

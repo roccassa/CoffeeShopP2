@@ -33,8 +33,16 @@ public class ProductVariantService : IProductVariantService
         var json = JsonConvert.SerializeObject(dto);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var res = await _client.PostAsync($"{_baseUrl}{_endpoint}", content);
-        var jsonResponse = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<Response<ProductVariantDto>>(jsonResponse)!;
+        var body = await res.Content.ReadAsStringAsync();
+        try
+        {
+            return JsonConvert.DeserializeObject<Response<ProductVariantDto>>(body)
+                   ?? new Response<ProductVariantDto> { Success = false, Message = "Respuesta vacía de la API." };
+        }
+        catch
+        {
+            return new Response<ProductVariantDto> { Success = false, Message = $"La API devolvió texto inválido: {body[..Math.Min(200, body.Length)]}" };
+        }
     }
 
     public async Task<Response<ProductVariantDto>> UpdateAsync(ProductVariantDto dto)
@@ -48,8 +56,16 @@ public class ProductVariantService : IProductVariantService
 
     public async Task<Response<bool>> DeleteAsync(int id)
     {
-        var res = await _client.DeleteAsync($"{_baseUrl}{_endpoint}/{id}");
-        var jsonResponse = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<Response<bool>>(jsonResponse)!;
+        var res  = await _client.DeleteAsync($"{_baseUrl}{_endpoint}/{id}");
+        var body = await res.Content.ReadAsStringAsync();
+        try
+        {
+            return JsonConvert.DeserializeObject<Response<bool>>(body)
+                   ?? new Response<bool> { Success = false };
+        }
+        catch
+        {
+            return new Response<bool> { Success = false, Message = body[..Math.Min(200, body.Length)] };
+        }
     }
 }
