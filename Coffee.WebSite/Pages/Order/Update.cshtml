@@ -5,114 +5,79 @@
 }
 
 @section Styles {
-    <style>
-        body {
-            background-color: #f8f1e9 !important;
-        }
+<style>
+    .main-content { background-color:#fdfbf7; min-height:100vh; padding-bottom:4rem; }
 
-        .main-content {
-            background-color: #fdfbf7;
-            min-height: 100vh;
-            padding-bottom: 4rem;
-        }
+    .page-header { background:linear-gradient(135deg,#2c1d11,#6f4e37); color:white; padding:1.4rem 0; margin-bottom:1.5rem; }
 
-        .page-header {
-            background: linear-gradient(135deg, #2c1d11, #6f4e37);
-            color: white;
-            padding: 2rem 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 2.5rem;
-        }
+    .card-custom {
+        border:none; background:#ffffff;
+        border-radius:16px;
+        box-shadow:0 10px 30px rgba(44,29,17,0.06);
+        padding:2rem 2.5rem;
+    }
 
-        .card-custom {
-            border: none;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(44, 29, 17, 0.06);
-            padding: 2.5rem;
-        }
+    .form-label { color:#2c1d11; font-weight:600; font-size:0.9rem; margin-bottom:0.4rem; }
 
-        .form-label {
-            color: #2c1d11;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
+    .input-group-text { background-color:#fdfbf7; border-color:#e9e4dc; color:#6f4e37; }
 
-        .input-group-text {
-            background-color: #fdfbf7;
-            border-color: #e9e4dc;
-            color: #6f4e37;
-        }
+    .form-control, .form-select {
+        border-color:#e9e4dc; padding:0.65rem 0.75rem;
+        background-color:#fdfbf7; font-size:0.95rem; border-radius:8px;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color:#fff; border-color:#6f4e37;
+        box-shadow:0 0 0 0.25rem rgba(111,78,55,0.15);
+    }
 
-        .form-control, .form-select {
-            border-color: #e9e4dc;
-            padding: 0.65rem 0.75rem;
-            background-color: #fdfbf7;
-            font-size: 0.95rem;
-            border-radius: 8px;
-        }
+    .btn-coffee-update {
+        background-color:#2c1d11; border-color:#2c1d11; color:white;
+        font-weight:600; padding:0.65rem 1.5rem; border-radius:8px;
+        transition:all 0.2s ease;
+    }
+    .btn-coffee-update:hover { background-color:#6f4e37; border-color:#6f4e37; color:white; }
 
-        .form-control:focus, .form-select:focus {
-            background-color: #ffffff;
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.15);
-        }
+    .btn-coffee-cancel {
+        background-color:transparent; border:1px solid #c8b195; color:#6f4e37;
+        font-weight:600; padding:0.65rem 1.5rem; border-radius:8px;
+        transition:all 0.2s ease;
+    }
+    .btn-coffee-cancel:hover { background-color:#f5e8d3; color:#2c1d11; border-color:#6f4e37; }
 
-        .btn-coffee-update {
-            background-color: #2c1d11;
-            border-color: #2c1d11;
-            color: white;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
+    .alert-custom {
+        background-color:#fdf2f2; border:1px solid #fbd5d5;
+        color:#9b1c1c; border-radius:8px; font-size:0.9rem;
+    }
 
-        .btn-coffee-update:hover {
-            background-color: #6f4e37;
-            border-color: #6f4e37;
-            color: white;
-        }
-
-        .btn-coffee-cancel {
-            background-color: transparent;
-            border: 1px solid #c8b195;
-            color: #6f4e37;
-            font-weight: 600;
-            padding: 0.65rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-coffee-cancel:hover {
-            background-color: #f5e8d3;
-            color: #2c1d11;
-            border-color: #6f4e37;
-        }
-
-        .alert-custom {
-            background-color: #fdf2f2;
-            border: 1px solid #fbd5d5;
-            color: #9b1c1c;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-    </style>
+    .section-title {
+        font-size:0.75rem; font-weight:700; text-transform:uppercase;
+        letter-spacing:0.6px; color:#6f4e37; margin-bottom:1rem;
+        padding-bottom:0.4rem; border-bottom:1px solid #e9e4dc;
+    }
+</style>
 }
 
 <div class="main-content">
-    <div class="page-header text-center">
+    <div class="page-header">
         <div class="container">
-            <h1 class="display-5 fw-bold">Modificar Estado de Orden</h1>
-            <p class="lead mb-0">Ajusta los montos, reasigna IDs de vinculación o cambia el estado de liquidación</p>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <h1 class="fw-bold mb-0 fs-4">
+                        <i class="bi bi-receipt me-2"></i>Editar Orden #@Model.OrderDto.Id
+                    </h1>
+                    <p class="mb-0 opacity-75 small">Modifica el cajero, cliente, método de pago o estado</p>
+                </div>
+                <a asp-page="./List" class="btn btn-light fw-bold" style="border-radius:8px; color:#2c1d11;">
+                    <i class="bi bi-arrow-left me-1"></i>Volver
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
-                
+
                 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
                 {
                     <div class="alert alert-custom d-flex align-items-center mb-4 p-3" role="alert">
@@ -121,62 +86,89 @@
                     </div>
                 }
 
-                <div class="card card-custom">
+                <div class="card-custom">
                     <form method="post" autocomplete="off">
                         <input type="hidden" asp-for="OrderDto.Id" />
-                        
+
+                        <p class="section-title"><i class="bi bi-person-lines-fill me-1"></i>Asignación</p>
+
+                        <!-- Cajero -->
                         <div class="mb-3">
-                            <label asp-for="OrderDto.UserId" class="form-label">ID del Usuario (Cajero)</label>
+                            <label class="form-label">Cajero</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                <input asp-for="OrderDto.UserId" class="form-control" type="number" required autofocus />
+                                <select asp-for="OrderDto.UserId" class="form-select" required>
+                                    <option value="">— Selecciona un cajero —</option>
+                                    @foreach (var u in Model.Users)
+                                    {
+                                        <option value="@u.Id">@u.FullName (@u.Username)</option>
+                                    }
+                                </select>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="OrderDto.CustomerId" class="form-label">ID del Cliente</label>
+                        <!-- Cliente -->
+                        <div class="mb-4">
+                            <label class="form-label">Cliente <span class="text-muted fw-normal">(opcional)</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                                <input asp-for="OrderDto.CustomerId" class="form-control" type="number" />
+                                <select asp-for="OrderDto.CustomerId" class="form-select">
+                                    <option value="">— Sin cliente —</option>
+                                    @foreach (var c in Model.Customers)
+                                    {
+                                        <option value="@c.Id">@c.Name</option>
+                                    }
+                                </select>
                             </div>
                         </div>
 
+                        <p class="section-title"><i class="bi bi-cash-stack me-1"></i>Pago y Estado</p>
+
+                        <!-- Método de pago -->
                         <div class="mb-3">
-                            <label asp-for="OrderDto.PaymentMethodId" class="form-label">ID del Método de Pago</label>
+                            <label class="form-label">Método de Pago</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-credit-card-2-back-fill"></i></span>
-                                <input asp-for="OrderDto.PaymentMethodId" class="form-control" type="number" required />
+                                <select asp-for="OrderDto.PaymentMethodId" class="form-select" required>
+                                    <option value="">— Selecciona método —</option>
+                                    @foreach (var p in Model.PaymentMethods)
+                                    {
+                                        <option value="@p.Id">@p.Name</option>
+                                    }
+                                </select>
                             </div>
                         </div>
 
+                        <!-- Total -->
                         <div class="mb-3">
-                            <label asp-for="OrderDto.Total" class="form-label">Monto Total ($)</label>
+                            <label asp-for="OrderDto.Total" class="form-label">Total ($)</label>
                             <div class="input-group">
                                 <span class="input-group-text fw-bold">$</span>
-                                <input asp-for="OrderDto.Total" class="form-control" type="number" step="0.01" required />
+                                <input asp-for="OrderDto.Total" class="form-control" type="number" step="0.01" min="0" required />
                             </div>
                         </div>
 
+                        <!-- Estado -->
                         <div class="mb-4">
                             <label asp-for="OrderDto.Status" class="form-label">Estado de la Orden</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-arrow-left-right"></i></span>
                                 <select asp-for="OrderDto.Status" class="form-select">
-                                    <option value="Pendiente">Pendiente</option>
-                                    <option value="Completado">Completado</option>
-                                    <option value="Cancelado">Cancelado</option>
+                                    <option value="Pendiente">⏳ Pendiente</option>
+                                    <option value="Completado">✅ Completado</option>
+                                    <option value="Cancelado">❌ Cancelado</option>
                                 </select>
                             </div>
                         </div>
 
-                        <hr class="text-muted my-4" />
+                        <hr class="my-4" style="border-color:#e9e4dc;" />
 
                         <div class="d-flex justify-content-end gap-3">
                             <a asp-page="./List" class="btn btn-coffee-cancel">
-                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-coffee-update">
-                                <i class="bi bi-pencil-square me-1"></i> Guardar Cambios
+                                <i class="bi bi-pencil-square me-1"></i>Guardar Cambios
                             </button>
                         </div>
 

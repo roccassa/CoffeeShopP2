@@ -32,17 +32,6 @@
     .status-active   { background:#dcfce7; color:#15803d; font-size:0.78rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:5px; }
     .status-inactive { background:#fee2e2; color:#b91c1c; font-size:0.78rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:5px; }
 
-    /* Validation rules panel */
-    .rules-card { background:#fdfbf7; border:1px solid #e9e4dc; border-radius:12px; padding:1.1rem; }
-    .rule-item {
-        display:flex; align-items:center; gap:0.6rem;
-        padding:0.4rem 0; font-size:0.82rem; border-bottom:1px solid #f0e8df;
-    }
-    .rule-item:last-child { border-bottom:none; }
-    .rule-icon { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; }
-    .rule-ok   { background:#dcfce7; color:#15803d; }
-    .rule-info { background:#dbeafe; color:#1e40af; }
-    .rule-warn { background:#fef3c7; color:#d97706; }
 </style>
 }
 
@@ -66,8 +55,8 @@
     <div class="container">
         <div class="row g-3 align-items-start">
 
-            <!-- Left: User Table -->
-            <div class="col-lg-8">
+            <!-- User Table -->
+            <div class="col-12">
 
                 <!-- Search -->
                 <form method="get" class="mb-3">
@@ -155,53 +144,6 @@
                     <span class="badge bg-secondary d-flex align-items-center px-3" style="border-radius:8px; font-size:0.82rem;">
                         @(Model.Users?.Count ?? 0) usuario(s) registrado(s)
                     </span>
-                </div>
-            </div>
-
-            <!-- Right: Validation rules panel (Scene 6) -->
-            <div class="col-lg-4">
-                <div class="rules-card">
-                    <h6 class="fw-bold mb-3" style="color:#2c1d11;">
-                        <i class="bi bi-shield-check me-2"></i>Reglas de Validación
-                    </h6>
-
-                    <div class="rule-item">
-                        <div class="rule-icon rule-info"><i class="bi bi-lock-fill"></i></div>
-                        <span>Las contraseñas se almacenan con hash BCrypt</span>
-                    </div>
-                    <div class="rule-item">
-                        <div class="rule-icon rule-ok"><i class="bi bi-check-lg"></i></div>
-                        <span>Verificación de duplicados (Username)</span>
-                    </div>
-                    <div class="rule-item">
-                        <div class="rule-icon rule-ok"><i class="bi bi-check-lg"></i></div>
-                        <span>Campos requeridos validados</span>
-                    </div>
-                    <div class="rule-item">
-                        <div class="rule-icon rule-warn"><i class="bi bi-shield-lock"></i></div>
-                        <span>Solo Admin puede crear/eliminar usuarios</span>
-                    </div>
-                    <div class="rule-item">
-                        <div class="rule-icon rule-info"><i class="bi bi-person-badge"></i></div>
-                        <span>Roles: Admin, Barista, Cajero</span>
-                    </div>
-
-                    <hr class="my-3" />
-
-                    <h6 class="fw-bold mb-2" style="color:#2c1d11; font-size:0.88rem;">
-                        <i class="bi bi-diagram-3 me-1"></i>Roles disponibles
-                    </h6>
-                    <div class="d-flex flex-wrap gap-2">
-                        <span class="role-badge role-admin">Admin</span>
-                        <span class="role-badge role-barista">Barista</span>
-                        <span class="role-badge role-cashier">Cajero</span>
-                    </div>
-
-                    <hr class="my-3" />
-
-                    <a asp-page="./Create" class="btn btn-coffee w-100 fw-bold">
-                        <i class="bi bi-person-plus-fill me-2"></i>Crear Nuevo Usuario
-                    </a>
                 </div>
             </div>
 

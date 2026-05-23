@@ -52,6 +52,9 @@ builder.Services.AddScoped<IOrderDetailService>(sp =>
 builder.Services.AddScoped<IUserService>(sp =>
     new UserService(sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient")));
 
+builder.Services.AddScoped<IAuthService>(sp =>
+    new AuthService(sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient")));
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment()) {

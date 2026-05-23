@@ -6,43 +6,40 @@ namespace Coffee.WebSite.Pages.Account;
 
 public class LoginModel : PageModel
 {
-    private readonly IUserService _userService;
+    private readonly IAuthService _authService;
 
     [BindProperty]
     public LoginInput Input { get; set; } = new();
 
-    public LoginModel(IUserService userService) => _userService = userService;
+    public LoginModel(IAuthService authService) => _authService = authService;
 
     public void OnGet() { }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (Input.Username?.Trim().ToLower() == "admin" && Input.Password == "1234")
+        if (string.IsNullOrWhiteSpace(Input.Username) || string.IsNullOrWhiteSpace(Input.Password))
         {
-            HttpContext.Session.SetString("IsLoggedIn", "true");
-            HttpContext.Session.SetString("Username", Input.Username.Trim());
-
-            // Look up real user ID from API
-            try
-            {
-                var response = await _userService.GetAllAsync();
-                var user = response.Data?.FirstOrDefault(u =>
-                    u.Username.Equals(Input.Username.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                HttpContext.Session.SetString("UserId", user?.Id.ToString() ?? "1");
-                HttpContext.Session.SetString("UserFullName", user?.FullName ?? Input.Username);
-            }
-            catch
-            {
-                HttpContext.Session.SetString("UserId", "1");
-                HttpContext.Session.SetString("UserFullName", Input.Username.Trim());
-            }
-
-            return RedirectToPage("/POS/Index");
+            ViewData["Error"] = "Ingresa usuario y contraseña.";
+            return Page();
         }
 
-        ViewData["Error"] = "Usuario o contraseña incorrectos.";
-        return Page();
+        var response = await _authService.LoginAsync(Input.Username.Trim(), Input.Password);
+
+        if (!response.Success || response.Data == null)
+        {
+            ViewData["Error"] = response.Message ?? "Usuario o contraseña incorrectos.";
+            return Page();
+        }
+
+        var user = response.Data;
+        HttpContext.Session.SetString("IsLoggedIn",   "true");
+        HttpContext.Session.SetString("Username",     user.Username);
+        HttpContext.Session.SetString("UserFullName", user.FullName);
+        HttpContext.Session.SetString("UserId",       user.Id.ToString());
+        HttpContext.Session.SetString("RoleId",       user.RoleId.ToString());
+        HttpContext.Session.SetString("RoleName",     user.RoleName ?? "");
+
+        return RedirectToPage("/POS/Index");
     }
 }
 

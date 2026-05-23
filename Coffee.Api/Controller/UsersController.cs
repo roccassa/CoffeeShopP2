@@ -61,10 +61,10 @@ public class UsersController : ControllerBase
         var response = new Response<UserDto>();
         var user = new Coffee.Core.Entities.User
         {
-            RoleId = dto.RoleId,
-            Username = dto.Username,
-            PasswordHash = dto.PasswordHash,
-            FullName = dto.FullName
+            RoleId       = dto.RoleId,
+            Username     = dto.Username,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash),
+            FullName     = dto.FullName
         };
         var result = await _repository.SaveAsync(user);
         if (!result)
