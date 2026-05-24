@@ -15,11 +15,15 @@ public class IndexModel : PageModel
     private readonly IOrderService _orderService;
     private readonly IOrderDetailService _orderDetailService;
     private readonly IPaymentMethodService _paymentMethodService;
+    private readonly ICustomerService _customerService;
+    private readonly IUserService _userService;
 
     public List<CategoryDto> Categories { get; set; } = new();
     public List<ProductDto> Products { get; set; } = new();
     public List<ProductVariantDto> Variants { get; set; } = new();
     public List<PaymentMethodDto> PaymentMethods { get; set; } = new();
+    public List<CustomerDto> Customers { get; set; } = new();
+    public List<UserDto> Users { get; set; } = new();
     public string CurrentUsername { get; set; } = string.Empty;
     public int CurrentUserId { get; set; } = 1;
 
@@ -29,7 +33,9 @@ public class IndexModel : PageModel
         IProductVariantService variantService,
         IOrderService orderService,
         IOrderDetailService orderDetailService,
-        IPaymentMethodService paymentMethodService)
+        IPaymentMethodService paymentMethodService,
+        ICustomerService customerService,
+        IUserService userService)
     {
         _categoryService = categoryService;
         _productService = productService;
@@ -37,6 +43,8 @@ public class IndexModel : PageModel
         _orderService = orderService;
         _orderDetailService = orderDetailService;
         _paymentMethodService = paymentMethodService;
+        _customerService = customerService;
+        _userService = userService;
     }
 
     public async Task<IActionResult> OnGetAsync()
@@ -48,17 +56,21 @@ public class IndexModel : PageModel
         var userIdStr = HttpContext.Session.GetString("UserId");
         CurrentUserId = int.TryParse(userIdStr, out var uid) ? uid : 1;
 
-        var catTask     = _categoryService.GetAllAsync();
-        var prodTask    = _productService.GetAllAsync();
-        var varTask     = _variantService.GetAllAsync();
-        var payTask     = _paymentMethodService.GetAllAsync();
+        var catTask      = _categoryService.GetAllAsync();
+        var prodTask     = _productService.GetAllAsync();
+        var varTask      = _variantService.GetAllAsync();
+        var payTask      = _paymentMethodService.GetAllAsync();
+        var customerTask = _customerService.GetAllAsync();
+        var userTask     = _userService.GetAllAsync();
 
-        await Task.WhenAll(catTask, prodTask, varTask, payTask);
+        await Task.WhenAll(catTask, prodTask, varTask, payTask, customerTask, userTask);
 
-        Categories    = (await catTask) ?? new();
-        Products      = ((await prodTask).Data ?? new()).Where(p => p.IsActive).ToList();
-        Variants      = (await varTask).Data ?? new();
+        Categories     = (await catTask) ?? new();
+        Products       = ((await prodTask).Data ?? new()).Where(p => p.IsActive).ToList();
+        Variants       = (await varTask).Data ?? new();
         PaymentMethods = (await payTask).Data ?? new();
+        Customers      = (await customerTask).Data ?? new();
+        Users          = (await userTask).Data ?? new();
 
         return Page();
     }
@@ -74,8 +86,9 @@ public class IndexModel : PageModel
 
         try
         {
-            var userIdStr = HttpContext.Session.GetString("UserId");
-            var userId = int.TryParse(userIdStr, out var uid) ? uid : 1;
+            var sessionUserIdStr = HttpContext.Session.GetString("UserId");
+            var sessionUserId = int.TryParse(sessionUserIdStr, out var uid) ? uid : 1;
+            var userId = req.UserId > 0 ? req.UserId : sessionUserId;
 
             var orderDto = new OrderDto
             {
@@ -116,6 +129,7 @@ public class CheckoutRequest
 {
     public int PaymentMethodId { get; set; }
     public int CustomerId { get; set; }
+    public int UserId { get; set; }
     public decimal Total { get; set; }
     public List<CheckoutItem> Items { get; set; } = new();
 }

@@ -10,6 +10,8 @@
     var productsJson       = System.Text.Json.JsonSerializer.Serialize(Model.Products.Select(p => new { id = p.Id, name = p.Name, categoryId = p.CategoryId, description = p.Description, imageUrl = p.ImageUrl }));
     var variantsJson       = System.Text.Json.JsonSerializer.Serialize(Model.Variants.Select(v => new { id = v.Id, productId = v.ProductId, size = v.Size, price = v.Price }));
     var paymentMethodsJson = System.Text.Json.JsonSerializer.Serialize(Model.PaymentMethods.Select(m => new { id = m.Id, name = m.Name }));
+    var customersJson      = System.Text.Json.JsonSerializer.Serialize(Model.Customers.Select(c => new { id = c.Id, name = c.Name, email = c.Email }));
+    var usersJson          = System.Text.Json.JsonSerializer.Serialize(Model.Users.Select(u => new { id = u.Id, fullName = u.FullName, username = u.Username }));
 }
 
 @section Styles {
@@ -189,6 +191,28 @@
                 <div id="payOrderSummary" class="mb-3 p-3" style="background:var(--cream-warm); border-radius:10px; font-size:0.88rem;">
                 </div>
 
+                <!-- Cashier (user) -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold mb-1">
+                        <i class="bi bi-person-badge me-1"></i>Cajero / Empleado
+                    </label>
+                    <select class="form-select form-select-sm" id="selectUser">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+
+                <!-- Customer (optional) -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold mb-1">
+                        <i class="bi bi-person me-1"></i>Cliente
+                        <span class="text-muted fw-normal small">(opcional)</span>
+                    </label>
+                    <select class="form-select form-select-sm" id="selectCustomer">
+                        <option value="0">— Sin cliente registrado —</option>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+
                 <!-- Payment method -->
                 <label class="form-label fw-bold mb-2">Método de pago</label>
                 <div class="row g-2 mb-3" id="payMethodGrid">
@@ -241,10 +265,13 @@
 @section Scripts {
 <script>
 // === DATA FROM SERVER ===
-const CATEGORIES     = @Html.Raw(categoriesJson);
-const PRODUCTS       = @Html.Raw(productsJson);
-const VARIANTS       = @Html.Raw(variantsJson);
+const CATEGORIES      = @Html.Raw(categoriesJson);
+const PRODUCTS        = @Html.Raw(productsJson);
+const VARIANTS        = @Html.Raw(variantsJson);
 const PAYMENT_METHODS = @Html.Raw(paymentMethodsJson);
+const CUSTOMERS       = @Html.Raw(customersJson);
+const USERS           = @Html.Raw(usersJson);
+const SESSION_USER_ID = @Model.CurrentUserId;
 
 // === TICKET STATE ===
 let ticket = [];          // [{variantId, productName, size, unitPrice, qty}]
@@ -482,6 +509,21 @@ function openPayModal() {
     ).join('') + `<div class="d-flex justify-content-between mt-2 pt-2 border-top fw-bold fs-6">
         <span>TOTAL</span><span>$${total.toFixed(2)}</span></div>`;
 
+    // Users select
+    const userSel = document.getElementById('selectUser');
+    userSel.innerHTML = USERS.map(u =>
+        `<option value="${u.id}" ${u.id === SESSION_USER_ID ? 'selected' : ''}>
+            ${u.fullName || u.username}
+         </option>`
+    ).join('');
+
+    // Customers select
+    const custSel = document.getElementById('selectCustomer');
+    custSel.innerHTML = '<option value="0">— Sin cliente registrado —</option>' +
+        CUSTOMERS.map(c =>
+            `<option value="${c.id}">${c.name}${c.email ? ' · ' + c.email : ''}</option>`
+        ).join('');
+
     // Payment methods
     const grid = document.getElementById('payMethodGrid');
     selectedPayMethod = null;
@@ -529,7 +571,8 @@ async function confirmPayment() {
 
     const payload = {
         paymentMethodId: selectedPayMethod,
-        customerId: 0,
+        userId:     parseInt(document.getElementById('selectUser').value)     || 0,
+        customerId: parseInt(document.getElementById('selectCustomer').value) || 0,
         total,
         items: ticket.map(i => ({
             variantId:   i.variantId,
