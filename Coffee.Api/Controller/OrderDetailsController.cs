@@ -29,7 +29,8 @@ public class OrderDetailsController : ControllerBase
                 ProductVariantId = d.ProductVariantId,
                 Quantity = d.Quantity,
                 UnitPrice = d.UnitPrice,
-                PresentationName = d.PresentationName
+                PresentationName = d.PresentationName,
+                ProductName = d.ProductName
             }).ToList()
         };
         return Ok(response);

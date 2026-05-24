@@ -9,4 +9,5 @@ public class OrderDetailDto
     public decimal UnitPrice { get; set; }
     
     public string? PresentationName { get; set; }
+    public string? ProductName { get; set; }
 }

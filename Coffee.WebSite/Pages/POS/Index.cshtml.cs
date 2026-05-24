@@ -83,7 +83,7 @@ public class IndexModel : PageModel
                 CustomerId      = req.CustomerId > 0 ? req.CustomerId : null,
                 PaymentMethodId = req.PaymentMethodId,
                 Total           = req.Total,
-                Status          = "Completado"
+                Status          = "Entregado"
             };
 
             var orderResponse = await _orderService.CreateAsync(orderDto);

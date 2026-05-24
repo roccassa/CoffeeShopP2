@@ -7,7 +7,7 @@ public class Order:BaseEntity
     public int? CustomerId { get; set; }
     public int PaymentMethodId { get; set; }
     public decimal Total { get; set; }
-    public string Status { get; set; } = "Pending";
+    public string Status { get; set; } = "Pendiente";
     
     public string? UserName { get; set; }
 

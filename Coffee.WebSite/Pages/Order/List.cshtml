@@ -314,7 +314,7 @@ function renderSideTicket(orderId, details) {
         document.getElementById('ticketLineItems').innerHTML =
             details.map(d =>
                 `<div class="t-row">
-                    <span>${d.quantity}× ${d.presentationName}</span>
+                    <span>${d.quantity}× ${d.productName ?? ''} (${d.presentationName ?? ''})</span>
                     <span>$${d.subtotal.toFixed(2)}</span>
                 </div>`
             ).join('');

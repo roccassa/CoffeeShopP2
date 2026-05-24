@@ -23,13 +23,13 @@ public class OrderDetailRepository : IOrderDetailRepository {
             d.presentacion_id as ProductVariantId,
             d.cantidad as Quantity,
             d.precio_unitario as UnitPrice,
-
-            p.tamano as PresentationName
-
+            p.tamano as PresentationName,
+            pr.nombre as ProductName
         FROM detalleorden d
-
         INNER JOIN presentaciones p
             ON d.presentacion_id = p.id
+        INNER JOIN Productos pr
+            ON p.producto_id = pr.id
     ";
 
         return await _context.Connection.QueryAsync<OrderDetail>(sql);

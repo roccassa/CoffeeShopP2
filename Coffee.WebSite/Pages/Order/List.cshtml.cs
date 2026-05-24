@@ -55,6 +55,7 @@ public class ListModel : PageModel
                 d.ProductVariantId,
                 d.Quantity,
                 d.UnitPrice,
+                ProductName      = d.ProductName      ?? "—",
                 PresentationName = d.PresentationName ?? "—",
                 Subtotal = d.Quantity * d.UnitPrice
             })

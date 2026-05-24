@@ -52,7 +52,8 @@ public class ProductsController : ControllerBase
             CategoryId = product.CategoryId,
             Name = product.Name,
             Description = product.Description,
-            IsActive = product.IsActive
+            IsActive = product.IsActive,
+            ImageUrl = product.ImageUrl
         };
         return Ok(response);
     }

@@ -36,8 +36,13 @@ public class UpdateModel : PageModel
         await Task.WhenAll(catTask, varTask);
 
         Categories = await catTask;
+        // Deduplicate by size to avoid showing/saving duplicates that may have
+        // accumulated in the DB. Keep the variant with the lowest Id (oldest,
+        // most likely referenced in order history).
         var existing = ((await varTask).Data ?? new())
             .Where(v => v.ProductId == id)
+            .GroupBy(v => (v.Size ?? "").Trim().ToLower())
+            .Select(g => g.OrderBy(v => v.Id).First())
             .OrderBy(v => v.Price)
             .ToList();
 
@@ -65,20 +70,49 @@ public class UpdateModel : PageModel
             return Page();
         }
 
-        // Replace all variants for this product
+        // Sync variants: delete old ones, but if deletion fails (FK in DetalleOrden)
+        // update the surviving variant instead of creating a duplicate.
         var varRes = await _variantService.GetAllAsync();
-        var toDelete = (varRes.Data ?? new()).Where(v => v.ProductId == ProductDto.Id).ToList();
-        foreach (var v in toDelete)
-            await _variantService.DeleteAsync(v.Id);
+        var existingVariants = (varRes.Data ?? new())
+            .Where(v => v.ProductId == ProductDto.Id).ToList();
 
-        foreach (var v in ParseVariants(VariantsJson).Where(v => !string.IsNullOrWhiteSpace(v.Size)))
+        // Try to delete each existing variant; track those that couldn't be removed
+        var notDeleted = new List<ProductVariantDto>();
+        foreach (var v in existingVariants)
         {
-            await _variantService.CreateAsync(new ProductVariantDto
+            var delResult = await _variantService.DeleteAsync(v.Id);
+            if (!(delResult?.Data ?? false))
+                notDeleted.Add(v);
+        }
+
+        // For each variant in the form, update a surviving one or create a new one
+        var newVariants = ParseVariants(VariantsJson)
+            .Where(v => !string.IsNullOrWhiteSpace(v.Size)).ToList();
+
+        foreach (var nv in newVariants)
+        {
+            var surviving = notDeleted.FirstOrDefault(r =>
+                string.Equals(r.Size?.Trim(), nv.Size.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (surviving != null)
             {
-                ProductId = ProductDto.Id,
-                Size      = v.Size.Trim(),
-                Price     = v.Price
-            });
+                // Reuse existing variant (referenced in order history); just update price
+                if (surviving.Price != nv.Price)
+                {
+                    surviving.Price = nv.Price;
+                    await _variantService.UpdateAsync(surviving);
+                }
+                notDeleted.Remove(surviving);
+            }
+            else
+            {
+                await _variantService.CreateAsync(new ProductVariantDto
+                {
+                    ProductId = ProductDto.Id,
+                    Size      = nv.Size.Trim(),
+                    Price     = nv.Price
+                });
+            }
         }
 
         return RedirectToPage("./List");
