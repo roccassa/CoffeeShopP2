@@ -25,8 +25,8 @@ public class OrderDetailRepository : IOrderDetailRepository {
             d.precio_unitario as UnitPrice,
             p.tamano as PresentationName,
             pr.nombre as ProductName
-        FROM detalleorden d
-        INNER JOIN presentaciones p
+        FROM DetalleOrden d
+        INNER JOIN Presentaciones p
             ON d.presentacion_id = p.id
         INNER JOIN Productos pr
             ON p.producto_id = pr.id
