@@ -26,3 +26,6 @@ Thumbs.db
 
 ## ASP.NET
 wwwroot/lib/
+
+## Configuracion de produccion (credenciales AWS)
+appsettings.Production.json
